@@ -47,7 +47,7 @@ namespace Protocol
             List<Diff> diffs = new List<Diff>();
             foreach (var diff in json.diffs)
             {
-                diffs.Add(new Diff(diff.operation, diff.text.ToString()));
+                diffs.Add(new Diff((Operation) diff.operation, diff.text.ToString()));
             }
 
             return new PatchMessage(json.sender.ToString(), diffs);

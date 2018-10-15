@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 
 namespace Client
@@ -15,6 +16,8 @@ namespace Client
         private LoginWindow _login;
         private readonly Net.Client _client;
         private readonly string _uuid = Guid.NewGuid().ToString();
+        private string _previousEditorContent = "";
+        public DispatcherTimer Timer { get; }
 
         public MainWindow()
         {
@@ -24,11 +27,25 @@ namespace Client
             this.Hide();
             InitializeComponent();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            Timer = new DispatcherTimer();
+            Timer.Interval = TimeSpan.FromMilliseconds(500);
+            Timer.Tick += Timer_Tick;
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            if (TextEditor.Text != "" && _previousEditorContent != TextEditor.Text)
+            {
+                _client.SendUpdatePatch(_previousEditorContent, TextEditor.Text);
+            }
+
+            _previousEditorContent = TextEditor.Text;
         }
 
         public void OnLogin()
         {
             Dispatcher.Invoke(Show);
+            Timer.Start();
         }
 
         private void ChatLog_OnSelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -10,10 +10,11 @@ namespace Server.Net
 {
     public class ClientHandler
     {
-        private Action<int, ClientHandler> _joinSession;
         public bool Running { get; set; } = true;
         public User User { get; private set; }
         public Session Session { get; set; }
+
+        private Action<int, ClientHandler> _joinSession;
         private readonly TcpClient _client;
         private readonly NetworkStream _stream;
         private readonly UserHandler _userHandler;
@@ -95,6 +96,7 @@ namespace Server.Net
 
         private void HandlePatchMessage(PatchMessage message)
         {
+            Console.WriteLine(message.Diffs);
         }
 
         #endregion

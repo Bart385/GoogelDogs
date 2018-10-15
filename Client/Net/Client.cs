@@ -41,8 +41,11 @@ namespace Client.Net
 
         public void SendUpdatePatch(string previousText, string currentText)
         {
-            Task.Factory.StartNew(() => _dmp.diff_main(previousText, currentText))
-                .ContinueWith((diffs) => SendMessage(new PatchMessage(Username, diffs.Result)));
+            Console.WriteLine("Generating diffs");
+
+            List<Diff> diffs = _dmp.diff_main(previousText, currentText);
+            SendMessage(new PatchMessage(Username, diffs));
+            Console.WriteLine("Done sending patch");
         }
 
         public void SendChatMessage(string message)

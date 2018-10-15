@@ -50,7 +50,7 @@
     <Compile Include="Business\UserAuthenticator.cs" />
     <Compile Include="Business\UserHandler.cs" />
     <Compile Include="Entities\Document.cs" />
-    <Compile Include="Entities\Session.cs" />
+    <Compile Include="Business\Session.cs" />
     <Compile Include="Entities\User.cs" />
     <Compile Include="Net\ClientHandler.cs" />
     <Compile Include="Program.cs" />
