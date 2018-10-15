@@ -71,6 +71,45 @@ namespace Client
 
         private void OnOpenClick(object sender, RoutedEventArgs e)
         {
+            throw new System.NotImplementedException();
+        }
+
+        private void TextEditor_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            File.WriteAllText($"{Path.GetTempPath()}{_uuid}_GoogelDogs_local_cache.txt", TextEditor.Text);
+        }
+
+        private void ChatBox_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return && ChatBox.Text != "")
+            {
+                _client.SendChatMessage(ChatBox.Text);
+                ChatBox.Text = "";
+            }
+        }
+
+        public void AddMessageToLog(string sender, string message)
+        {
+            Dispatcher.Invoke(() => { this.ChatLog.Items.Add(new {Sender = sender, Message = message}); });
+        }
+
+        private void OnCreditsClick(object sender, RoutedEventArgs e)
+        {
+            string x = String.Format("========================={0} GoogleDogs was made by {0} Ruben Woldhuis & Bart van Es {0}=========================", Environment.NewLine);
+            MessageBox.Show(x);
+        }
+
+        private void Menu_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu1_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+    }
+}
             Stream myStream = null;
             Microsoft.Win32.OpenFileDialog openFileDialog1 = new Microsoft.Win32.OpenFileDialog();
             openFileDialog1.InitialDirectory = "c:\\";
@@ -97,25 +136,6 @@ namespace Client
             }
         }
 
-        private void TextEditor_OnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            File.WriteAllText($"{Path.GetTempPath()}{_uuid}_GoogelDogs_local_cache.txt", TextEditor.Text);
-        }
-
-        private void ChatBox_OnKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Return && ChatBox.Text != "")
-            {
-                _client.SendChatMessage(ChatBox.Text);
-                ChatBox.Text = "";
-            }
-        }
-
-        public void AddMessageToLog(string sender, string message)
-        {
-            Dispatcher.Invoke(() => { this.ChatLog.Items.Add(new {Sender = sender, Message = message}); });
-        }
-
         public void UpdateTextEditor(PatchMessage message)
         {
             Dispatcher.Invoke(() => { });
@@ -129,5 +149,13 @@ namespace Client
                 Environment.NewLine);
             MessageBox.Show(x);
         }
-    }
-}
+
+        private void Menu_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu1_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
