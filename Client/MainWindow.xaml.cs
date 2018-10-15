@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using DiffMatchPatch;
+using Protocol.Messages;
 
 
 namespace Client
@@ -21,7 +24,7 @@ namespace Client
 
         public MainWindow()
         {
-            _client = new Net.Client("127.0.0.1", 1337, OnLogin, AddMessageToLog);
+            _client = new Net.Client("127.0.0.1", 1337, OnLogin, AddMessageToLog, UpdateTextEditor);
             _login = new LoginWindow(_client);
             _login.Show();
             this.Hide();
@@ -55,12 +58,43 @@ namespace Client
 
         private void OnSaveClick(object sender, RoutedEventArgs e)
         {
-            throw new System.NotImplementedException();
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog()
+            {
+                Filter = "Text Files(*.txt)|*.txt|All(*.*)|*"
+            };
+
+            if (dlg.ShowDialog() == true)
+            {
+                File.WriteAllText(dlg.FileName, TextEditor.Text);
+            }
         }
 
         private void OnOpenClick(object sender, RoutedEventArgs e)
         {
-            throw new System.NotImplementedException();
+            Stream myStream = null;
+            Microsoft.Win32.OpenFileDialog openFileDialog1 = new Microsoft.Win32.OpenFileDialog();
+            openFileDialog1.InitialDirectory = "c:\\";
+            openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            openFileDialog1.FilterIndex = 2;
+            openFileDialog1.RestoreDirectory = true;
+
+            if (openFileDialog1.ShowDialog() == true)
+            {
+                try
+                {
+                    if ((myStream = openFileDialog1.OpenFile()) != null)
+                    {
+                        using (myStream)
+                        {
+                            TextEditor.Text = File.ReadAllText(openFileDialog1.FileName);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                }
+            }
         }
 
         private void TextEditor_OnTextChanged(object sender, TextChangedEventArgs e)
@@ -80,6 +114,12 @@ namespace Client
         public void AddMessageToLog(string sender, string message)
         {
             Dispatcher.Invoke(() => { this.ChatLog.Items.Add(new {Sender = sender, Message = message}); });
+        }
+
+        public void UpdateTextEditor(PatchMessage message)
+        {
+            Dispatcher.Invoke(() => { });
+        }
         }
 
         private void OnCreditsClick(object sender, RoutedEventArgs e)

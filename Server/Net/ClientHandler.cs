@@ -97,7 +97,6 @@ namespace Server.Net
         private void HandlePatchMessage(PatchMessage message)
         {
             Console.WriteLine(message.Diffs);
-            Session.Document.
         }
 
         #endregion

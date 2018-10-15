@@ -11,25 +11,28 @@ namespace Client.Net
 {
     public class Client
     {
+        public string Username { get; set; }
         public bool Running { get; set; } = true;
         public Document Document { get; }
+        public diff_match_patch DMP { get; }
+
         private readonly Action _loginCallback;
         private readonly Action<string, string> _messageLogCallback;
-        public string Username { get; set; }
+        private readonly Action<PatchMessage> _editorUpdateCallback;
         private readonly TcpClient _tcpClient;
         private readonly NetworkStream _stream;
-        private readonly diff_match_patch _dmp;
 
         public Client(string hostname, int port, Action loginCallback,
-            Action<string, string> messageLogCallback)
+            Action<string, string> messageLogCallback, Action<PatchMessage> editorUpdateCallback)
         {
             _loginCallback = loginCallback;
             _messageLogCallback = messageLogCallback;
+            _editorUpdateCallback = editorUpdateCallback;
             Document = new Document();
             _tcpClient = new TcpClient(hostname, port);
             Console.WriteLine(_tcpClient.Connected);
             _stream = _tcpClient.GetStream();
-            _dmp = new diff_match_patch();
+            DMP = new diff_match_patch();
             StartBackgroundListener();
         }
 
@@ -45,9 +48,12 @@ namespace Client.Net
         public void SendUpdatePatch(string previousText, string currentText)
         {
             Console.WriteLine("Generating diffs");
-
-            List<Diff> diffs = _dmp.diff_main(previousText, currentText);
-            SendMessage(new PatchMessage(Username, diffs));
+            Document.CurrentText = currentText;
+            List<Diff> diffs = DMP.diff_main(previousText, currentText);
+            SendMessage(new PatchMessage(Username, diffs, Document.ShadowCopy.ClientVersion,
+                Document.ShadowCopy.ServerVersion));
+            Document.ShadowCopy.ClientVersion++;
+            Document.ShadowCopy.ShadowText = Document.CurrentText;
             Console.WriteLine("Done sending patch");
         }
 
@@ -119,6 +125,7 @@ namespace Client.Net
 
         private void HandlePatchMessage(PatchMessage message)
         {
+            _editorUpdateCallback(message);
         }
 
         #endregion
