@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using Client.Entities;
 using DiffMatchPatch;
 using Protocol;
 using Protocol.Messages;
@@ -11,6 +12,7 @@ namespace Client.Net
     public class Client
     {
         public bool Running { get; set; } = true;
+        public Document Document { get; }
         private readonly Action _loginCallback;
         private readonly Action<string, string> _messageLogCallback;
         public string Username { get; set; }
@@ -23,6 +25,7 @@ namespace Client.Net
         {
             _loginCallback = loginCallback;
             _messageLogCallback = messageLogCallback;
+            Document = new Document();
             _tcpClient = new TcpClient(hostname, port);
             Console.WriteLine(_tcpClient.Connected);
             _stream = _tcpClient.GetStream();
