@@ -50,7 +50,7 @@ namespace Protocol
                 diffs.Add(new Diff((Operation) diff.operation, diff.text.ToString()));
             }
 
-            return new PatchMessage(json.sender.ToString(), diffs);
+            return new PatchMessage(json.sender.ToString(), diffs, (int) json.clientVersion, (int) json.serverVersion);
         }
     }
 }
