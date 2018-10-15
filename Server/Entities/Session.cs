@@ -23,8 +23,7 @@ namespace Server.Entities
         {
             foreach (var client in _clients)
             {
-                if (client.User.Username != sender)
-                    client.SendMessage(new ChatMessage(sender, message));
+                client.SendMessage(new ChatMessage(sender, message));
             }
         }
     }

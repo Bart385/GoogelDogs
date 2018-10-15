@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using DiffMatchPatch;
+using Newtonsoft.Json;
 
 namespace Protocol.Messages
 {
-    class PatchMessage : IMessage
+    public class PatchMessage : IMessage
     {
         public MessageType Type { get; } = MessageType.PATCH_MESSAGE;
         public string Sender { get; }
@@ -19,7 +20,13 @@ namespace Protocol.Messages
 
         public string ToJson()
         {
-            throw new NotImplementedException();
+            dynamic json = new
+            {
+                type = Type,
+                sender = Sender,
+                diffs = Diffs
+            };
+            return JsonConvert.SerializeObject(json);
         }
     }
 }

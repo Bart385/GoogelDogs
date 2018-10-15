@@ -5,15 +5,19 @@ using Newtonsoft.Json;
 
 namespace Protocol.Messages
 {
-    class OkLoginMessage : IMessage
+    public class OkLoginMessage : IMessage
     {
         public MessageType Type { get; } = MessageType.OK_LOGIN_MESSAGE;
+
+        public OkLoginMessage()
+        {
+        }
 
         public string ToJson()
         {
             dynamic json = new
             {
-                type = Type
+                type = Type,
             };
             return JsonConvert.SerializeObject(json);
         }

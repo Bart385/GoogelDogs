@@ -84,10 +84,12 @@ namespace Server.Net
              else SendMessage(new OkLoginMessage());*/
             _joinSession(message.SessionId, this);
             SendMessage(new OkLoginMessage());
+            Session.BroadCastChatMessage("Server", $"Welcome {message.Username}");
         }
 
         private void HandleChatMessage(ChatMessage message)
         {
+            Console.WriteLine("Handling Chat Message");
             Session.BroadCastChatMessage(message.Sender, message.Message);
         }
 

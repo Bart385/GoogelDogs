@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Protocol.Messages
 {
@@ -18,7 +19,13 @@ namespace Protocol.Messages
 
         public string ToJson()
         {
-            throw new NotImplementedException();
+            dynamic json = new
+            {
+                type = Type,
+                sender = Sender,
+                message = Message
+            };
+            return JsonConvert.SerializeObject(json);
         }
     }
 }

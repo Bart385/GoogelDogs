@@ -38,9 +38,15 @@ namespace Server.Net
         public void JoinSession(int sessionId, ClientHandler client)
         {
             Console.WriteLine("Joining session...");
+
+            if (!_sessions.ContainsKey(sessionId))
+            {
                 _sessions[sessionId] = new Session();
+            }
+
             Console.WriteLine("Created a session!");
             _sessions[sessionId].Join(client);
+            client.Session = _sessions[sessionId];
             Console.WriteLine($"Joined session: {sessionId}");
         }
     }

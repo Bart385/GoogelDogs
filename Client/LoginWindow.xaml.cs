@@ -29,7 +29,7 @@ namespace Client
 
         private void Login_Click(object sender, RoutedEventArgs e)
         {
-            _client.Login(UsernameTextBlock.Text, PasswordTextBox.Password, int.Parse(SessionIDTextBox.Text));
+            _client.Login(UsernameTextBox.Text, PasswordTextBox.Password, int.Parse(SessionIDTextBox.Text));
             this.Close();
         }
     }

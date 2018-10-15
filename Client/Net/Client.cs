@@ -11,15 +11,18 @@ namespace Client.Net
     public class Client
     {
         public bool Running { get; set; } = true;
-        private Action _loginCallback;
+        private readonly Action _loginCallback;
+        private readonly Action<string, string> _messageLogCallback;
         public string Username { get; set; }
         private readonly TcpClient _tcpClient;
         private readonly NetworkStream _stream;
         private readonly diff_match_patch _dmp;
 
-        public Client(string hostname, int port, Action loginCallback)
+        public Client(string hostname, int port, Action loginCallback,
+            Action<string, string> messageLogCallback)
         {
             _loginCallback = loginCallback;
+            _messageLogCallback = messageLogCallback;
             _tcpClient = new TcpClient(hostname, port);
             Console.WriteLine(_tcpClient.Connected);
             _stream = _tcpClient.GetStream();
@@ -105,6 +108,7 @@ namespace Client.Net
 
         private void HandleChatMessage(ChatMessage message)
         {
+            _messageLogCallback(message.Sender, message.Message);
         }
 
         private void HandlePatchMessage(PatchMessage message)
