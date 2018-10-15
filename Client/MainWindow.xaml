@@ -8,18 +8,18 @@
         Title="MainWindow" Height="720" Width="1280">
     <DockPanel>
         <Menu DockPanel.Dock="Top">
-            <MenuItem x:Name="Menu" Header="_File" Click="Menu_Click">
+            <MenuItem x:Name="Menu" Header="_File">
                 <MenuItem Header="_Open" Click="OnOpenClick" />
                 <MenuItem Header="_Save" Click="OnSaveClick" />
             </MenuItem>
-            <MenuItem x:Name="Menu1" Header="Help" Click="Menu1_Click">
-                <MenuItem Header="_Credits" Click="OnCreditsClick"/>
+            <MenuItem x:Name="Menu1" Header="Help">
+                <MenuItem Header="_Credits" Click="OnCreditsClick" />
             </MenuItem>
         </Menu>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="56*"/>
-                <ColumnDefinition Width="1217*"/>
+                <ColumnDefinition Width="56*" />
+                <ColumnDefinition Width="1217*" />
             </Grid.ColumnDefinitions>
             <ListView x:Name="ChatLog" HorizontalAlignment="Left" Height="613" Margin="794.5,0,0,0"
                       VerticalAlignment="Top" Width="412" SelectionChanged="ChatLog_OnSelectionChanged" Grid.Column="1">

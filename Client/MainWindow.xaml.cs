@@ -120,22 +120,14 @@ namespace Client
         {
             Dispatcher.Invoke(() => { });
         }
-        }
+
 
         private void OnCreditsClick(object sender, RoutedEventArgs e)
         {
-            string x = String.Format("========================={0} GoogleDogs was made by {0} Ruben Woldhuis & Bart van Es {0}=========================", Environment.NewLine);
+            string x = string.Format(
+                "========================={0} GoogleDogs was made by {0} Ruben Woldhuis & Bart van Es {0}=========================",
+                Environment.NewLine);
             MessageBox.Show(x);
-        }
-
-        private void Menu_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Menu1_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }
