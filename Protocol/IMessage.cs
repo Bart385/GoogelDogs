@@ -16,6 +16,7 @@ namespace Protocol
         PATCH_MESSAGE,
         OK_MESSAGE,
         ERROR_MESSAGE,
-        LOGIN_MESSAGE
+        LOGIN_MESSAGE,
+        OK_LOGIN_MESSAGE
     }
 }

@@ -12,7 +12,7 @@ namespace Protocol
         public static async Task SendMessage(NetworkStream stream, IMessage message)
         {
             string serialized = message.ToJson();
-
+            Console.WriteLine(serialized);
             byte[] lengthPrefix = BitConverter.GetBytes(serialized.Length);
             byte[] data = Encoding.UTF8.GetBytes(serialized);
             byte[] buffer = new byte[lengthPrefix.Length + data.Length];

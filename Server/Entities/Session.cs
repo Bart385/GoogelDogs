@@ -10,6 +10,15 @@ namespace Server.Entities
     {
         private List<ClientHandler> _clients = new List<ClientHandler>();
 
+        public Session()
+        {
+        }
+
+        public void Join(ClientHandler client)
+        {
+            _clients.Add(client);
+        }
+
         public void BroadCastChatMessage(string sender, string message)
         {
             foreach (var client in _clients)

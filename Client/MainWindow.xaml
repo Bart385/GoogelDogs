@@ -5,8 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="MainWindow" Height="720" Width="1280">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem x:Name="Menu" Header="_File">
+                <MenuItem Header="_Open" Click="OnOpenClick" />
+                <MenuItem Header="_Save" Click="OnSaveClick" />
+            </MenuItem>
+        </Menu>
+        <Grid>
+            <ListView x:Name="ChatLog" HorizontalAlignment="Left" Height="613" Margin="850,0,0,0"
+                      VerticalAlignment="Top" Width="412" SelectionChanged="ChatLog_OnSelectionChanged">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Sender" DisplayMemberBinding="{Binding Sender}" Width="62" />
+                        <GridViewColumn Header="Message" DisplayMemberBinding="{Binding Message}" Width="350" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <TextBox x:Name="TextEditor" HorizontalAlignment="Left" Height="661" Margin="0,0,0,0" TextWrapping="Wrap"
+                     VerticalAlignment="Top" Width="845" AcceptsReturn="True" TextChanged="TextEditor_OnTextChanged"
+                     VerticalScrollBarVisibility="Visible" />
+            <TextBox x:Name="ChatBox" HorizontalAlignment="Left" Height="43" Margin="850,618,0,0" TextWrapping="Wrap"
+                     KeyDown="ChatBox_OnKeyDown" VerticalAlignment="Top" Width="412" />
+        </Grid>
+    </DockPanel>
 </Window>

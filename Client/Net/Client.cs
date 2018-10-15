@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using DiffMatchPatch;
@@ -9,16 +10,18 @@ namespace Client.Net
 {
     public class Client
     {
-        public static Client Instance { get; } = new Client("127.0.0.1", 1337);
         public bool Running { get; set; } = true;
+        private Action _loginCallback;
         public string Username { get; set; }
         private readonly TcpClient _tcpClient;
         private readonly NetworkStream _stream;
         private readonly diff_match_patch _dmp;
 
-        private Client(string hostname, int port)
+        public Client(string hostname, int port, Action loginCallback)
         {
+            _loginCallback = loginCallback;
             _tcpClient = new TcpClient(hostname, port);
+            Console.WriteLine(_tcpClient.Connected);
             _stream = _tcpClient.GetStream();
             _dmp = new diff_match_patch();
             StartBackgroundListener();
@@ -28,6 +31,7 @@ namespace Client.Net
 
         public void Login(string username, string password, int session)
         {
+            Console.WriteLine("Logging in!");
             Username = username;
             SendMessage(new LoginMessage(username, password, session));
         }
@@ -52,16 +56,22 @@ namespace Client.Net
 
         private void StartBackgroundListener()
         {
+            Console.WriteLine("Connected!");
             Task.Factory.StartNew(async () =>
             {
                 while (Running)
                 {
                     dynamic msg = await MessagingUtil.ReceiveMessage(_stream);
+                    Console.WriteLine($"In Client BackgroundListener: {msg}");
                     IMessage message = JsonDecoder.Decode(msg);
+                    Console.WriteLine($"In Client BackgroundListener: {message.Type}");
                     switch (message.Type)
                     {
                         case MessageType.OK_MESSAGE:
                             HandleOkMessage((OkMessage) message);
+                            break;
+                        case MessageType.OK_LOGIN_MESSAGE:
+                            HandleOkLoginMessage((OkLoginMessage) message);
                             break;
                         case MessageType.ERROR_MESSAGE:
                             HandleErrorMessage((ErrorMessage) message);
@@ -81,6 +91,12 @@ namespace Client.Net
 
         private void HandleOkMessage(OkMessage message)
         {
+        }
+
+        private void HandleOkLoginMessage(OkLoginMessage message)
+        {
+            Console.WriteLine("Login approved!");
+            _loginCallback();
         }
 
         private void HandleErrorMessage(ErrorMessage message)

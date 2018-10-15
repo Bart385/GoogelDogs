@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using Protocol;
 using Protocol.Messages;
@@ -9,6 +10,7 @@ namespace Server.Net
 {
     public class ClientHandler
     {
+        private Action<int, ClientHandler> _joinSession;
         public bool Running { get; set; } = true;
         public User User { get; private set; }
         public Session Session { get; set; }
@@ -16,10 +18,11 @@ namespace Server.Net
         private readonly NetworkStream _stream;
         private readonly UserHandler _userHandler;
 
-        public ClientHandler(TcpClient client, UserHandler userHandler)
+        public ClientHandler(TcpClient client, UserHandler userHandler, Action<int, ClientHandler> joinSession)
         {
             _client = client;
             _stream = _client.GetStream();
+            _joinSession = joinSession;
             _userHandler = userHandler;
             StartBackgroundListener();
         }
@@ -35,8 +38,11 @@ namespace Server.Net
             {
                 while (Running)
                 {
+                    Console.WriteLine("Receiving...");
                     dynamic msg = await MessagingUtil.ReceiveMessage(_stream);
+                    Console.WriteLine(msg);
                     IMessage message = JsonDecoder.Decode(msg);
+                    Console.WriteLine(message.Type);
                     switch (message.Type)
                     {
                         case MessageType.OK_MESSAGE:
@@ -71,10 +77,13 @@ namespace Server.Net
 
         private void HandleLoginMessage(LoginMessage message)
         {
-            User = UserAuthenticator.Authenticate(message.Username, message.Password, _userHandler);
-            if (User == null)
-                SendMessage(new ErrorMessage("Login Failed"));
-            else SendMessage(new OkMessage());
+            Console.WriteLine("Handling Login");
+            /* User = UserAuthenticator.Authenticate(message.Username, message.Password, _userHandler);
+             if (User == null)
+                 SendMessage(new ErrorMessage("Login Failed"));
+             else SendMessage(new OkLoginMessage());*/
+            _joinSession(message.SessionId, this);
+            SendMessage(new OkLoginMessage());
         }
 
         private void HandleChatMessage(ChatMessage message)

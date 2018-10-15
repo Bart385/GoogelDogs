@@ -10,7 +10,9 @@ namespace Protocol
     {
         public static IMessage Decode(dynamic json)
         {
+            Console.WriteLine(json);
             MessageType type = (MessageType) json.type;
+            Console.WriteLine(type);
             switch (type)
             {
                 case MessageType.OK_MESSAGE:
@@ -21,6 +23,10 @@ namespace Protocol
                     return DecodeToChatMessage(json);
                 case MessageType.PATCH_MESSAGE:
                     return DecodeToPatchMessage(json);
+                case MessageType.LOGIN_MESSAGE:
+                    return DecodeToLoginMessage(json);
+                case MessageType.OK_LOGIN_MESSAGE:
+                    return DecodeToOkLoginMessage(json);
                 default:
                     return null;
             }
@@ -28,6 +34,11 @@ namespace Protocol
 
         private static OkMessage DecodeToOkMessage(dynamic json) => new OkMessage();
         private static ErrorMessage DecodeToErrorMessage(dynamic json) => new ErrorMessage(json.error.ToString());
+
+        private static LoginMessage DecodeToLoginMessage(dynamic json) => new LoginMessage(json.username.ToString(),
+            json.password.ToString(), (int) json.sessionId);
+
+        private static OkLoginMessage DecodeToOkLoginMessage(dynamic json) => new OkLoginMessage();
 
         private static ChatMessage DecodeToChatMessage(dynamic json) =>
             new ChatMessage(json.sender.ToString(), json.message.ToString());

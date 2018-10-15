@@ -14,19 +14,8 @@ namespace Server
     {
         static void Main(string[] args)
         {
-            TcpListener listener = new TcpListener(IPAddress.Parse("127.0.0.1"), 1337);
-            listener.Start();
-
-            while (true)
-            {
-                TcpClient client = listener.AcceptTcpClient();
-                TestMessaging(client);
-            }
+            new Net.Server();
         }
 
-        private static async void TestMessaging(TcpClient client)
-        {
-            await MessagingUtil.SendMessage(client.GetStream(), new OkMessage());
-        }
     }
 }

@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messages\ChatMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\ErrorMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\LoginMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\OkLoginMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\OkMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\PatchMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MessagingUtil.cs" />

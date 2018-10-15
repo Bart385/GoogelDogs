@@ -23,6 +23,7 @@ namespace Protocol.Messages
         {
             dynamic json = new
             {
+                type = Type,
                 username = Username,
                 password = Password,
                 sessionId = SessionId
