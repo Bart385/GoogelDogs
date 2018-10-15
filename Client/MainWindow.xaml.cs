@@ -98,15 +98,13 @@ namespace Client
             }
         }
 
-    
-
         private void TextEditor_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-             File.WriteAllText($"{Path.GetTempPath()}{_uuid}_GoogelDogs_local_cache.txt", TextEditor.Text);
+            File.WriteAllText($"{Path.GetTempPath()}{_uuid}_GoogelDogs_local_cache.txt", TextEditor.Text);
         }
 
         private void ChatBox_OnKeyDown(object sender, KeyEventArgs e)
-         {
+        {
             if (e.Key == Key.Return && ChatBox.Text != "")
             {
                 _client.SendChatMessage(ChatBox.Text);
@@ -119,27 +117,8 @@ namespace Client
             Dispatcher.Invoke(() => { this.ChatLog.Items.Add(new {Sender = sender, Message = message}); });
         }
 
-        private void OnCreditsClick(object sender, RoutedEventArgs e)
+        public void UpdateTextEditor(PatchMessage message)
         {
-            Dispatcher.Invoke(() => { });
-        }
-
-        private void Menu_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Menu1_Click(object sender, RoutedEventArgs e)
-        {
-            string x = string.Format(
-                "========================={0} GoogleDogs was made by {0} Ruben Woldhuis & Bart van Es {0}=========================",
-                Environment.NewLine);
-            MessageBox.Show(x);
-        }
-    }
-}
-            
-     
             Task.Factory.StartNew(() => _client.DMP.patch_make(TextEditor.Text, message.Diffs)).ContinueWith(
                 (patches) =>
                 {
@@ -148,6 +127,14 @@ namespace Client
                         TextEditor.Text = _client.DMP.patch_apply(patches.Result, TextEditor.Text)[0].ToString();
                     });
                 });
+        }
+
+
+        private void OnCreditsClick(object sender, RoutedEventArgs e)
+        {
             MessageBox.Show(string.Format(
                 "========================={0} GoogleDogs was made by {0} Ruben Woldhuis & Bart van Es {0}=========================",
                 Environment.NewLine));
+        }
+    }
+}
