@@ -71,16 +71,41 @@ namespace Client
 
         private void OnOpenClick(object sender, RoutedEventArgs e)
         {
-            throw new System.NotImplementedException();
+            Stream myStream = null;
+            Microsoft.Win32.OpenFileDialog openFileDialog1 = new Microsoft.Win32.OpenFileDialog();
+            openFileDialog1.InitialDirectory = "c:\\";
+            openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            openFileDialog1.FilterIndex = 2;
+            openFileDialog1.RestoreDirectory = true;
+
+            if (openFileDialog1.ShowDialog() == true)
+            {
+                try
+                {
+                    if ((myStream = openFileDialog1.OpenFile()) != null)
+                    {
+                        using (myStream)
+                        {
+                            TextEditor.Text = File.ReadAllText(openFileDialog1.FileName);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                }
+            }
         }
+
+    
 
         private void TextEditor_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            File.WriteAllText($"{Path.GetTempPath()}{_uuid}_GoogelDogs_local_cache.txt", TextEditor.Text);
+             File.WriteAllText($"{Path.GetTempPath()}{_uuid}_GoogelDogs_local_cache.txt", TextEditor.Text);
         }
 
         private void ChatBox_OnKeyDown(object sender, KeyEventArgs e)
-        {
+         {
             if (e.Key == Key.Return && ChatBox.Text != "")
             {
                 _client.SendChatMessage(ChatBox.Text);
@@ -108,54 +133,12 @@ namespace Client
         {
 
         }
-    }
-}
-            Stream myStream = null;
-            Microsoft.Win32.OpenFileDialog openFileDialog1 = new Microsoft.Win32.OpenFileDialog();
-            openFileDialog1.InitialDirectory = "c:\\";
-            openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            openFileDialog1.FilterIndex = 2;
-            openFileDialog1.RestoreDirectory = true;
-
-            if (openFileDialog1.ShowDialog() == true)
-            {
-                try
-                {
-                    if ((myStream = openFileDialog1.OpenFile()) != null)
-                    {
-                        using (myStream)
-                        {
-                            TextEditor.Text = File.ReadAllText(openFileDialog1.FileName);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
-                }
-            }
-        }
 
         public void UpdateTextEditor(PatchMessage message)
         {
             Dispatcher.Invoke(() => { });
         }
-
-
-        private void OnCreditsClick(object sender, RoutedEventArgs e)
-        {
-            string x = string.Format(
-                "========================={0} GoogleDogs was made by {0} Ruben Woldhuis & Bart van Es {0}=========================",
-                Environment.NewLine);
-            MessageBox.Show(x);
-        }
-
-        private void Menu_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Menu1_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
+    }
+}
+            
+     
