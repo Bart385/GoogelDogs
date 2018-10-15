@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -120,8 +121,7 @@ namespace Client
 
         private void OnCreditsClick(object sender, RoutedEventArgs e)
         {
-            string x = String.Format("========================={0} GoogleDogs was made by {0} Ruben Woldhuis & Bart van Es {0}=========================", Environment.NewLine);
-            MessageBox.Show(x);
+            Dispatcher.Invoke(() => { });
         }
 
         private void Menu_Click(object sender, RoutedEventArgs e)
@@ -131,14 +131,23 @@ namespace Client
 
         private void Menu1_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        public void UpdateTextEditor(PatchMessage message)
-        {
-            Dispatcher.Invoke(() => { });
+            string x = string.Format(
+                "========================={0} GoogleDogs was made by {0} Ruben Woldhuis & Bart van Es {0}=========================",
+                Environment.NewLine);
+            MessageBox.Show(x);
         }
     }
 }
             
      
+            Task.Factory.StartNew(() => _client.DMP.patch_make(TextEditor.Text, message.Diffs)).ContinueWith(
+                (patches) =>
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        TextEditor.Text = _client.DMP.patch_apply(patches.Result, TextEditor.Text)[0].ToString();
+                    });
+                });
+            MessageBox.Show(string.Format(
+                "========================={0} GoogleDogs was made by {0} Ruben Woldhuis & Bart van Es {0}=========================",
+                Environment.NewLine));

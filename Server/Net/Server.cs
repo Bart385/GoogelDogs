@@ -17,7 +17,7 @@ namespace Server.Net
 
         public Server()
         {
-            //_userHandler = new UserHandler("../../Accounts.conf");
+            _userHandler = new UserHandler("../../resources/Accounts.conf");
             _sessions = new Dictionary<int, Session>();
 
             _server = new TcpListener(IPAddress.Parse("127.0.0.1"), 1337);
