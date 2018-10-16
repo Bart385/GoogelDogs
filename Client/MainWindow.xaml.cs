@@ -20,7 +20,7 @@ namespace Client
         private LoginWindow _login;
         private readonly Net.Client _client;
         private readonly string _uuid = Guid.NewGuid().ToString();
-        private string _previousEditorContent = "";
+        private string _previousEditorContent;
         public DispatcherTimer Timer { get; }
 
         public MainWindow()
@@ -31,14 +31,14 @@ namespace Client
             this.Hide();
             InitializeComponent();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            Timer = new DispatcherTimer();
-            Timer.Interval = TimeSpan.FromMilliseconds(500);
+            _previousEditorContent = TextEditor.Text;
+            Timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(500)};
             Timer.Tick += Timer_Tick;
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            if (TextEditor.Text != "" && _previousEditorContent != TextEditor.Text)
+            if (_previousEditorContent != TextEditor.Text)
             {
                 _client.SendUpdatePatch(_previousEditorContent, TextEditor.Text);
             }
@@ -119,14 +119,11 @@ namespace Client
 
         public void UpdateTextEditor(PatchMessage message)
         {
-            Task.Factory.StartNew(() => _client.DMP.patch_make(TextEditor.Text, message.Diffs)).ContinueWith(
-                (patches) =>
-                {
-                    Dispatcher.Invoke(() =>
-                    {
-                        TextEditor.Text = _client.DMP.patch_apply(patches.Result, TextEditor.Text)[0].ToString();
-                    });
-                });
+            List<Patch> patches = _client.DMP.patch_make(TextEditor.Text, message.Diffs);
+            Dispatcher.Invoke(() =>
+            {
+                TextEditor.Text = _client.DMP.patch_apply(patches, TextEditor.Text)[0].ToString();
+            });
         }
 
 

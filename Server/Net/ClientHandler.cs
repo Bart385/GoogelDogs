@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using DiffMatchPatch;
 using Protocol;
 using Protocol.Messages;
 using Server.Business;
@@ -18,10 +20,12 @@ namespace Server.Net
         private readonly TcpClient _client;
         private readonly NetworkStream _stream;
         private readonly UserHandler _userHandler;
+        private readonly diff_match_patch _dmp;
 
         private ClientHandler(TcpClient client, UserHandler userHandler, Action<int, ClientHandler> joinSession)
         {
             _client = client;
+            _dmp = new diff_match_patch();
             _stream = _client.GetStream();
             _joinSession = joinSession;
             _userHandler = userHandler;
@@ -118,7 +122,27 @@ namespace Server.Net
 
         private void HandlePatchMessage(PatchMessage message)
         {
-            Console.WriteLine(message.Diffs);
+            List<Patch> patches = _dmp.patch_make(Session.Document.ShadowCopy.ShadowText, message.Diffs);
+            Session.Document.ShadowCopy.ShadowText =
+                _dmp.patch_apply(patches, Session.Document.ShadowCopy.ShadowText)[0].ToString();
+            Session.Document.ShadowCopy.ClientVersion++;
+            Session.Document.BackupShadowCopy.BackupText = Session.Document.ShadowCopy.ShadowText;
+
+            patches = _dmp.patch_make(Session.Document.CurrentText, message.Diffs);
+            Session.Document.CurrentText =
+                _dmp.patch_apply(patches, Session.Document.CurrentText)[0].ToString();
+
+            Console.WriteLine($"Current server text = {Session.Document.CurrentText}");
+            /*
+            Console.WriteLine("Generating diffs");
+
+            List<Diff> diffs = _dmp.diff_main(previousText, currentText);
+            SendMessage(new PatchMessage(Username, diffs, Document.ShadowCopy.ClientVersion,
+                Document.ShadowCopy.ServerVersion));
+            Document.ShadowCopy.ClientVersion++;
+            Document.ShadowCopy.ShadowText = Document.CurrentText;
+            Console.WriteLine("Done sending patch");
+            */
         }
 
         #endregion

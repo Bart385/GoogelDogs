@@ -4,7 +4,7 @@
     {
         public string Username { get; }
         public string Password { get; }
-        public Document Document { get; set; }
+        public Document Document { get; set; } = new Document();
 
         public User(string username, string password)
         {
