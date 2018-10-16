@@ -26,7 +26,7 @@ namespace Client
         public MainWindow()
         {
             _client = new Net.Client("127.0.0.1", 1337, OnLogin, AddMessageToLog, UpdateTextEditor);
-            _login = new LoginWindow(_client);
+            _login = new LoginWindow(_client, this);
             _login.Show();
             this.Hide();
             InitializeComponent();
@@ -54,7 +54,6 @@ namespace Client
 
         private void ChatLog_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            throw new System.NotImplementedException();
         }
 
         private void OnSaveClick(object sender, RoutedEventArgs e)

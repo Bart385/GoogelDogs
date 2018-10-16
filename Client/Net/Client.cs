@@ -69,6 +69,13 @@ namespace Client.Net
             await MessagingUtil.SendMessage(_stream, message);
         }
 
+        public void Close()
+        {
+            Running = false;
+            _stream.Flush();
+            _stream.Close();
+            _tcpClient.Close();
+        }
 
         private void StartBackgroundListener()
         {

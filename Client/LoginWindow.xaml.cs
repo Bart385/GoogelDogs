@@ -20,11 +20,18 @@ namespace Client
     public partial class LoginWindow : Window
     {
         private Net.Client _client;
+        private MainWindow _main;
 
-        public LoginWindow(Net.Client client)
+        public LoginWindow(Net.Client client, MainWindow main)
         {
             _client = client;
             InitializeComponent();
+            Closing += LoginWindow_Closing;
+        }
+
+        private void LoginWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            _client.Close();
         }
 
         private void Login_Click(object sender, RoutedEventArgs e)
