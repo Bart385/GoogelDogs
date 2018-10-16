@@ -69,6 +69,7 @@ namespace Client.Net
             await MessagingUtil.SendMessage(_stream, message);
         }
 
+
         private void StartBackgroundListener()
         {
             Console.WriteLine("Connected!");
@@ -77,6 +78,7 @@ namespace Client.Net
                 while (Running)
                 {
                     dynamic msg = await MessagingUtil.ReceiveMessage(_stream);
+
                     Console.WriteLine($"In Client BackgroundListener: {msg}");
                     IMessage message = JsonDecoder.Decode(msg);
                     Console.WriteLine($"In Client BackgroundListener: {message.Type}");

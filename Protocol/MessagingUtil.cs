@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,15 +19,7 @@ namespace Protocol
             lengthPrefix.CopyTo(buffer, 0);
             data.CopyTo(buffer, lengthPrefix.Length);
 
-            try
-            {
-                await stream.WriteAsync(buffer, 0, buffer.Length);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            await stream.WriteAsync(buffer, 0, buffer.Length);
         }
 
         public static async Task<dynamic> ReceiveMessage(NetworkStream stream)
@@ -34,18 +27,17 @@ namespace Protocol
             byte[] prefix = new byte[sizeof(int)];
             int bytesRead = 0;
             byte[] data;
-
-            try
+            while (bytesRead < prefix.Length)
             {
-                while (bytesRead < prefix.Length)
+                try
                 {
                     bytesRead += await stream.ReadAsync(prefix, bytesRead, prefix.Length - bytesRead);
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
+                catch (IOException e)
+                {
+                    Console.WriteLine("Error reading prefix");
+                    return null;
+                }
             }
 
             bytesRead = 0;
@@ -53,33 +45,33 @@ namespace Protocol
             {
                 data = new byte[BitConverter.ToInt32(prefix, 0)];
             }
-            catch (Exception e)
+            catch (ArgumentException e)
             {
-                Console.WriteLine(e);
-                throw;
+                Console.WriteLine("Error converting byte[] prefix to size");
+                return null;
             }
 
-            try
+            while (bytesRead < data.Length)
             {
-                while (bytesRead < data.Length)
+                try
                 {
                     bytesRead += await stream.ReadAsync(data, bytesRead, data.Length - bytesRead);
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
+                catch (IOException e)
+                {
+                    Console.WriteLine("Error reading data");
+                    return null;
+                }
             }
 
             try
             {
                 return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data));
             }
-            catch (Exception e)
+            catch (ArgumentException e)
             {
-                Console.WriteLine(e);
-                throw;
+                Console.WriteLine("Error converting byte[] data to string");
+                return null;
             }
         }
     }

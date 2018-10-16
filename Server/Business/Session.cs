@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DiffMatchPatch;
 using Protocol;
 using Protocol.Messages;
@@ -9,7 +10,7 @@ namespace Server.Business
 {
     public class Session
     {
-        private List<ClientHandler> _clients = new List<ClientHandler>();
+        private readonly List<ClientHandler> _clients = new List<ClientHandler>();
         public Document Document { get; }
 
         public Session()
@@ -20,6 +21,13 @@ namespace Server.Business
         public void Join(ClientHandler client)
         {
             _clients.Add(client);
+        }
+
+        public void Leave(ClientHandler client)
+        {
+            _clients.Remove(client);
+            Console.WriteLine($"{client.User.Username} has left the session.");
+            BroadCastChatMessage("Server", $"{client.User.Username} has left the session.");
         }
 
         public void BroadCastChatMessage(string sender, string message)

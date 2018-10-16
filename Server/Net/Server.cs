@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using Protocol;
-using Protocol.Messages;
 using Server.Business;
-using Server.Entities;
+
 
 namespace Server.Net
 {
@@ -19,7 +17,6 @@ namespace Server.Net
         {
             _userHandler = new UserHandler("../../resources/Accounts.conf");
             _sessions = new Dictionary<int, Session>();
-
             _server = new TcpListener(IPAddress.Parse("127.0.0.1"), 1337);
             _server.Start();
             Console.WriteLine("Started server...");
@@ -31,20 +28,18 @@ namespace Server.Net
         private void OnConnect(IAsyncResult ar)
         {
             TcpClient client = _server.EndAcceptTcpClient(ar);
-            ClientHandler handler = new ClientHandler(client, _userHandler, JoinSession);
+            Console.WriteLine("New Client connected!");
+            ClientHandler.Start(client, _userHandler, JoinSession);
             _server.BeginAcceptTcpClient(OnConnect, this);
         }
 
         public void JoinSession(int sessionId, ClientHandler client)
         {
             Console.WriteLine("Joining session...");
-
             if (!_sessions.ContainsKey(sessionId))
-            {
-                _sessions[sessionId] = new Session();
-            }
-
+                _sessions.Add(sessionId, new Session());
             Console.WriteLine("Created a session!");
+
             _sessions[sessionId].Join(client);
             client.Session = _sessions[sessionId];
             Console.WriteLine($"Joined session: {sessionId}");

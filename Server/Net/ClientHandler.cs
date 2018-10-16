@@ -19,7 +19,7 @@ namespace Server.Net
         private readonly NetworkStream _stream;
         private readonly UserHandler _userHandler;
 
-        public ClientHandler(TcpClient client, UserHandler userHandler, Action<int, ClientHandler> joinSession)
+        private ClientHandler(TcpClient client, UserHandler userHandler, Action<int, ClientHandler> joinSession)
         {
             _client = client;
             _stream = _client.GetStream();
@@ -28,9 +28,23 @@ namespace Server.Net
             StartBackgroundListener();
         }
 
+        public static void Start(TcpClient client, UserHandler userHandler, Action<int, ClientHandler> joinSession)
+        {
+            new ClientHandler(client, userHandler, joinSession);
+        }
+
         public async void SendMessage(IMessage message)
         {
             await MessagingUtil.SendMessage(_stream, message);
+        }
+
+        public void CloseConnection()
+        {
+            Session.Leave(this);
+            Running = false;
+            _stream.Flush();
+            _stream.Close();
+            _client.Close();
         }
 
         private void StartBackgroundListener()
@@ -41,6 +55,13 @@ namespace Server.Net
                 {
                     Console.WriteLine("Receiving...");
                     dynamic msg = await MessagingUtil.ReceiveMessage(_stream);
+
+                    if (msg == null)
+                    {
+                        CloseConnection();
+                        return;
+                    }
+
                     Console.WriteLine(msg);
                     IMessage message = JsonDecoder.Decode(msg);
                     Console.WriteLine(message.Type);
@@ -83,6 +104,7 @@ namespace Server.Net
              if (User == null)
                  SendMessage(new ErrorMessage("Login Failed"));
              else SendMessage(new OkLoginMessage());*/
+            User = new User(message.Username, message.Password);
             _joinSession(message.SessionId, this);
             SendMessage(new OkLoginMessage());
             Session.BroadCastChatMessage("Server", $"Welcome {message.Username}");
