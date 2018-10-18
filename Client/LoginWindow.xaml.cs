@@ -26,7 +26,7 @@ namespace Client
         {
             _client = client;
             InitializeComponent();
-            Closing += LoginWindow_Closing;
+          //  Closing += LoginWindow_Closing;
         }
 
         private void LoginWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
