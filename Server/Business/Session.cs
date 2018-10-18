@@ -12,16 +12,27 @@ namespace Server.Business
         private readonly List<ClientHandler> _clients = new List<ClientHandler>();
         public Document Document { get; }
 
+        /// <summary>
+        /// Session constructor
+        /// </summary>
         public Session()
         {
             Document = new Document();
         }
 
+        /// <summary>
+        /// Adds a client to the current session.
+        /// </summary>
+        /// <param name="client"></param>
         public void Join(ClientHandler client)
         {
             _clients.Add(client);
         }
 
+        /// <summary>
+        /// Removes a client from the current session.
+        /// </summary>
+        /// <param name="client"></param>
         public void Leave(ClientHandler client)
         {
             _clients.Remove(client);
@@ -29,6 +40,11 @@ namespace Server.Business
             BroadCastChatMessage("Server", $"{client.User.Username} has left the session.");
         }
 
+        /// <summary>
+        /// Broadcasts a chat message to all clients connected to the current session.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="message"></param>
         public void BroadCastChatMessage(string sender, string message)
         {
             foreach (var client in _clients)
@@ -37,6 +53,10 @@ namespace Server.Business
             }
         }
 
+        /// <summary>
+        /// Broadcasts a patch message to all clients connected to the current session.
+        /// </summary>
+        /// <param name="message"></param>
         public void BroadCastPatchMessage(PatchMessage message)
         {
             foreach (var client in _clients)

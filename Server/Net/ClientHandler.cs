@@ -23,6 +23,12 @@ namespace Server.Net
         private readonly UserHandler _userHandler;
         private readonly DiffMatchPatch _dmp;
 
+        /// <summary>
+        /// ClientHandler constructor
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="userHandler"></param>
+        /// <param name="joinSession"></param>
         private ClientHandler(TcpClient client, UserHandler userHandler, Action<string, ClientHandler> joinSession)
         {
             _client = client;
@@ -33,16 +39,29 @@ namespace Server.Net
             StartBackgroundListener();
         }
 
+        /// <summary>
+        /// Static start method to create a ClientHandler and start it.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="userHandler"></param>
+        /// <param name="joinSession"></param>
         public static void Start(TcpClient client, UserHandler userHandler, Action<string, ClientHandler> joinSession)
         {
             new ClientHandler(client, userHandler, joinSession);
         }
 
+        /// <summary>
+        /// Async method to send a message
+        /// </summary>
+        /// <param name="message">Message is a message class in Protocol that implements IMessage</param>
         public async void SendMessage(IMessage message)
         {
             await MessagingUtil.SendMessage(_stream, message);
         }
 
+        /// <summary>
+        /// Closes the connection with a client and leaves the session.
+        /// </summary>
         public void CloseConnection()
         {
             Session.Leave(this);
@@ -52,6 +71,9 @@ namespace Server.Net
             _client.Close();
         }
 
+        /// <summary>
+        /// Starts a background listener that waits for any message from the client
+        /// </summary>
         private void StartBackgroundListener()
         {
             Task.Factory.StartNew(async () =>
@@ -94,14 +116,28 @@ namespace Server.Net
 
         #region Handlers
 
+        /// <summary>
+        /// Handles an Ok Message from the client
+        /// </summary>
+        /// <param name="message"></param>
         private void HandleOkMessage(OkMessage message)
         {
         }
 
+        /// <summary>
+        /// Handles an Error Message from the client
+        /// </summary>
+        /// <param name="message"></param>
         private void HandleErrorMessage(ErrorMessage message)
         {
         }
 
+        /// <summary>
+        /// Handles a login message from the client.
+        /// If the user can be authenticated a User instance will be created, and the client will be able to log in.
+        /// If the user cannot be authenticated, an error message will be send to the client. Indicating the username or password were wrong.
+        /// </summary>
+        /// <param name="message"></param>
         private void HandleLoginMessage(LoginMessage message)
         {
             Console.WriteLine("Handling Login");
@@ -118,12 +154,23 @@ namespace Server.Net
             }
         }
 
+        /// <summary>
+        /// Handles a chat message from the client.
+        /// </summary>
+        /// <param name="message"></param>
         private void HandleChatMessage(ChatMessage message)
         {
             Console.WriteLine("Handling Chat Message");
             Session.BroadCastChatMessage(message.Sender, message.Message);
         }
 
+        /// <summary>
+        /// Creates a patch from the PatchMessage sent by the client.
+        /// Then applies the patch to the ShadowCopy followed by applying the patch to the live server copy.
+        /// Then creates new diffs from the live server text and the shadow (which contains the exact copy of latest client message).
+        /// These diffs will then be send to the client so that the client now has the latest updates.
+        /// </summary>
+        /// <param name="message"></param>
         private void HandlePatchMessage(PatchMessage message)
         {
             /*

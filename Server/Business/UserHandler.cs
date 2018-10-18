@@ -16,6 +16,10 @@ namespace Server.Business
             Users = LoadUsersFromFile();
         }
 
+        /// <summary>
+        /// Loads all users from a file
+        /// </summary>
+        /// <returns></returns>
         private List<User> LoadUsersFromFile()
         {
             List<User> users = new List<User>();
@@ -29,6 +33,10 @@ namespace Server.Business
             return users;
         }
 
+        /// <summary>
+        /// Adds a new user to the user file.
+        /// </summary>
+        /// <param name="user"></param>
         public void AddNewUser(User user)
         {
             Users.Add(user);

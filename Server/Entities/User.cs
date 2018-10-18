@@ -6,6 +6,11 @@
         public string Password { get; }
         public Document Document { get; set; } = new Document();
 
+        /// <summary>
+        /// A User has an username and a password.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
         public User(string username, string password)
         {
             Username = username;

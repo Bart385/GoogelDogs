@@ -13,6 +13,9 @@ namespace Server.Net
         private readonly TcpListener _server;
         private readonly Dictionary<string, Session> _sessions;
 
+        /// <summary>
+        /// Server constructor
+        /// </summary>
         public Server()
         {
             _userHandler = new UserHandler("../../resources/Accounts.conf");
@@ -25,6 +28,10 @@ namespace Server.Net
             Console.ReadKey();
         }
 
+        /// <summary>
+        /// Async callback on Client connected.
+        /// </summary>
+        /// <param name="ar"></param>
         private void OnConnect(IAsyncResult ar)
         {
             TcpClient client = _server.EndAcceptTcpClient(ar);
@@ -33,6 +40,11 @@ namespace Server.Net
             _server.BeginAcceptTcpClient(OnConnect, this);
         }
 
+        /// <summary>
+        /// Joins a session
+        /// </summary>
+        /// <param name="sessionId">SessionId indicates the session to join</param>
+        /// <param name="client">Client is the ClientHandler that needs to join a session</param>
         public void JoinSession(string sessionId, ClientHandler client)
         {
             Console.WriteLine("Joining session...");
