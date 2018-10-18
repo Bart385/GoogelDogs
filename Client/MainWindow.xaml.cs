@@ -118,11 +118,18 @@ namespace Client
 
         public void UpdateTextEditor(PatchMessage message)
         {
+            foreach (var diff in message.Diffs)
+            {
+                Console.WriteLine(diff);
+            }
+
+            /*
             List<Patch> patches = _client.DMP.patch_make(TextEditor.Text, message.Diffs);
             Dispatcher.Invoke(() =>
             {
                 TextEditor.Text = _client.DMP.patch_apply(patches, TextEditor.Text)[0].ToString();
             });
+            */
         }
 
 

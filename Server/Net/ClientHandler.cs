@@ -126,6 +126,7 @@ namespace Server.Net
 
         private void HandlePatchMessage(PatchMessage message)
         {
+            /*
             List<Patch> patches = _dmp.patch_make(Session.Document.ShadowCopy.ShadowText, message.Diffs);
             Session.Document.ShadowCopy.ShadowText =
                 _dmp.patch_apply(patches, Session.Document.ShadowCopy.ShadowText)[0].ToString();
@@ -135,6 +136,18 @@ namespace Server.Net
             Session.Document.CurrentText =
                 _dmp.patch_apply(patches, Session.Document.CurrentText)[0].ToString();
             Console.WriteLine($"Current server text = {Session.Document.CurrentText}");
+            */
+
+            /*
+             Console.WriteLine($"Generating diffs for user: {User.Username}...");
+
+             List<Diff> diffs = _dmp.diff_main(User.Document.ShadowCopy.ShadowText, Session.Document.CurrentText);
+             _dmp.diff_cleanupSemantic(diffs);
+               SendMessage(new PatchMessage("Server", diffs, User.Document.ShadowCopy.ClientVersion,
+                   User.Document.ShadowCopy.ServerVersion));
+             User.Document.ShadowCopy.ServerVersion++;
+             Console.WriteLine($"Done generating diffs for user: {User.Username}.");
+             */
         }
 
         #endregion

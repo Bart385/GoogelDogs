@@ -48,6 +48,7 @@ namespace Client.Net
 
         public void SendUpdatePatch(string previousText, string currentText)
         {
+            /*
             Console.WriteLine("Generating diffs");
             Document.CurrentText = currentText;
             List<Diff> diffs = DMP.diff_main(previousText, currentText);
@@ -57,6 +58,7 @@ namespace Client.Net
             Document.ShadowCopy.ClientVersion++;
             Document.ShadowCopy.ShadowText = Document.CurrentText;
             Console.WriteLine("Done sending patch");
+            */
         }
 
         public void SendChatMessage(string message)
