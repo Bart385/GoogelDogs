@@ -26,7 +26,7 @@ namespace Client
         {
             _client = client;
             InitializeComponent();
-          //  Closing += LoginWindow_Closing;
+            //  Closing += LoginWindow_Closing;
         }
 
         private void LoginWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -36,7 +36,7 @@ namespace Client
 
         private void Login_Click(object sender, RoutedEventArgs e)
         {
-            _client.Login(UsernameTextBox.Text, PasswordTextBox.Password, int.Parse(SessionIDTextBox.Text));
+            _client.Login(UsernameTextBox.Text, PasswordTextBox.Password, SessionIDTextBox.Text);
             this.Close();
         }
     }

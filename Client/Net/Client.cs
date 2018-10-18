@@ -39,7 +39,7 @@ namespace Client.Net
 
         #region Commands
 
-        public void Login(string username, string password, int session)
+        public void Login(string username, string password, string session)
         {
             Console.WriteLine("Logging in!");
             Username = username;
@@ -127,6 +127,8 @@ namespace Client.Net
 
         private void HandleErrorMessage(ErrorMessage message)
         {
+            if (message.Message == "Login Failed")
+                Console.WriteLine("Error logging in...");
         }
 
         private void HandleChatMessage(ChatMessage message)

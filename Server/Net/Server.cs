@@ -11,12 +11,12 @@ namespace Server.Net
     {
         private readonly UserHandler _userHandler;
         private readonly TcpListener _server;
-        private readonly Dictionary<int, Session> _sessions;
+        private readonly Dictionary<string, Session> _sessions;
 
         public Server()
         {
             _userHandler = new UserHandler("../../resources/Accounts.conf");
-            _sessions = new Dictionary<int, Session>();
+            _sessions = new Dictionary<string, Session>();
             _server = new TcpListener(IPAddress.Parse("127.0.0.1"), 1337);
             _server.Start();
             Console.WriteLine("Started server...");
@@ -33,7 +33,7 @@ namespace Server.Net
             _server.BeginAcceptTcpClient(OnConnect, this);
         }
 
-        public void JoinSession(int sessionId, ClientHandler client)
+        public void JoinSession(string sessionId, ClientHandler client)
         {
             Console.WriteLine("Joining session...");
             if (!_sessions.ContainsKey(sessionId))

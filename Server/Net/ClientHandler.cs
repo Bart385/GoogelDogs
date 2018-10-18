@@ -17,13 +17,13 @@ namespace Server.Net
         public User User { get; private set; }
         public Session Session { get; set; }
 
-        private Action<int, ClientHandler> _joinSession;
+        private readonly Action<string, ClientHandler> _joinSession;
         private readonly TcpClient _client;
         private readonly NetworkStream _stream;
         private readonly UserHandler _userHandler;
         private readonly DiffMatchPatch _dmp;
 
-        private ClientHandler(TcpClient client, UserHandler userHandler, Action<int, ClientHandler> joinSession)
+        private ClientHandler(TcpClient client, UserHandler userHandler, Action<string, ClientHandler> joinSession)
         {
             _client = client;
             _dmp = new DiffMatchPatch();
@@ -33,7 +33,7 @@ namespace Server.Net
             StartBackgroundListener();
         }
 
-        public static void Start(TcpClient client, UserHandler userHandler, Action<int, ClientHandler> joinSession)
+        public static void Start(TcpClient client, UserHandler userHandler, Action<string, ClientHandler> joinSession)
         {
             new ClientHandler(client, userHandler, joinSession);
         }
@@ -105,14 +105,17 @@ namespace Server.Net
         private void HandleLoginMessage(LoginMessage message)
         {
             Console.WriteLine("Handling Login");
-            /* User = UserAuthenticator.Authenticate(message.Username, message.Password, _userHandler);
-             if (User == null)
-                 SendMessage(new ErrorMessage("Login Failed"));
-             else SendMessage(new OkLoginMessage());*/
-            User = new User(message.Username, message.Password);
-            _joinSession(message.SessionId, this);
-            SendMessage(new OkLoginMessage());
-            Session.BroadCastChatMessage("Server", $"Welcome {message.Username}");
+            User = UserAuthenticator.Authenticate(message.Username, message.Password, _userHandler);
+            if (User == null)
+                SendMessage(new ErrorMessage("Login Failed"));
+            else
+            {
+                SendMessage(new OkLoginMessage());
+
+                _joinSession(message.SessionId, this);
+                SendMessage(new OkLoginMessage());
+                Session.BroadCastChatMessage("Server", $"Welcome {message.Username}");
+            }
         }
 
         private void HandleChatMessage(ChatMessage message)
@@ -128,22 +131,10 @@ namespace Server.Net
                 _dmp.patch_apply(patches, Session.Document.ShadowCopy.ShadowText)[0].ToString();
             Session.Document.ShadowCopy.ClientVersion++;
             Session.Document.BackupShadowCopy.BackupText = Session.Document.ShadowCopy.ShadowText;
-
             patches = _dmp.patch_make(Session.Document.CurrentText, message.Diffs);
             Session.Document.CurrentText =
                 _dmp.patch_apply(patches, Session.Document.CurrentText)[0].ToString();
-
             Console.WriteLine($"Current server text = {Session.Document.CurrentText}");
-            /*
-            Console.WriteLine("Generating diffs");
-
-            List<Diff> diffs = _dmp.diff_main(previousText, currentText);
-            SendMessage(new PatchMessage(Username, diffs, Document.ShadowCopy.ClientVersion,
-                Document.ShadowCopy.ServerVersion));
-            Document.ShadowCopy.ClientVersion++;
-            Document.ShadowCopy.ShadowText = Document.CurrentText;
-            Console.WriteLine("Done sending patch");
-            */
         }
 
         #endregion

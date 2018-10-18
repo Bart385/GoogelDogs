@@ -10,9 +10,9 @@ namespace Protocol.Messages
         public MessageType Type { get; } = MessageType.LOGIN_MESSAGE;
         public string Username { get; }
         public string Password { get; }
-        public int SessionId { get; }
+        public string SessionId { get; }
 
-        public LoginMessage(string username, string password, int sessionId)
+        public LoginMessage(string username, string password, string sessionId)
         {
             Username = username;
             Password = password;

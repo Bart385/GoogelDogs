@@ -11,6 +11,7 @@ namespace Protocol
         public static IMessage Decode(dynamic json)
         {
             MessageType type = (MessageType) json.type;
+            Console.WriteLine(type);
             switch (type)
             {
                 case MessageType.OK_MESSAGE:
@@ -31,10 +32,10 @@ namespace Protocol
         }
 
         private static OkMessage DecodeToOkMessage(dynamic json) => new OkMessage();
-        private static ErrorMessage DecodeToErrorMessage(dynamic json) => new ErrorMessage(json.error.ToString());
+        private static ErrorMessage DecodeToErrorMessage(dynamic json) => new ErrorMessage(json.message.ToString());
 
         private static LoginMessage DecodeToLoginMessage(dynamic json) => new LoginMessage(json.username.ToString(),
-            json.password.ToString(), (int) json.sessionId);
+            json.password.ToString(), json.sessionId.ToString());
 
         private static OkLoginMessage DecodeToOkLoginMessage(dynamic json) =>
             new OkLoginMessage();
