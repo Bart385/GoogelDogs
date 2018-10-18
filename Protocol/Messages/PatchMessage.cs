@@ -10,16 +10,12 @@ namespace Protocol.Messages
     {
         public MessageType Type { get; } = MessageType.PATCH_MESSAGE;
         public string Sender { get; }
-        public List<Diff> Diffs { get; }
-        public int ClientVersion { get; }
-        public int ServerVersion { get; }
+        public Stack<Edit> Edits { get; }
 
-        public PatchMessage(string sender, List<Diff> diffs, int clientVersion, int serverVersion)
+        public PatchMessage(string sender, Stack<Edit> edits)
         {
             Sender = sender;
-            Diffs = diffs;
-            ClientVersion = clientVersion;
-            ServerVersion = serverVersion;
+            Edits = edits;
         }
 
         public string ToJson()
@@ -28,9 +24,7 @@ namespace Protocol.Messages
             {
                 type = Type,
                 sender = Sender,
-                diffs = Diffs,
-                clientVersion = ClientVersion,
-                serverVersion = ServerVersion
+                edits = Edits
             };
             return JsonConvert.SerializeObject(json);
         }

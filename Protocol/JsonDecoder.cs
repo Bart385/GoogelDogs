@@ -11,7 +11,6 @@ namespace Protocol
         public static IMessage Decode(dynamic json)
         {
             MessageType type = (MessageType) json.type;
-            Console.WriteLine(type);
             switch (type)
             {
                 case MessageType.OK_MESSAGE:
@@ -45,13 +44,24 @@ namespace Protocol
 
         private static PatchMessage DecodeToPatchMessage(dynamic json)
         {
-            List<Diff> diffs = new List<Diff>();
-            foreach (var diff in json.diffs)
+            Stack<Edit> edits = new Stack<Edit>();
+            for (var i = json.edits.Count; i > 0; i--)
             {
-                diffs.Add(new Diff((Operation) diff.operation, diff.text.ToString()));
+                Console.WriteLine("In for loop...{0}", i);
+                List<Diff> diffs = new List<Diff>();
+                foreach (var diff in json.edits[0].Diffs)
+                {
+                    Console.WriteLine("In diff loop...");
+                    diffs.Add(new Diff((Operation) diff.operation, diff.text.ToString()));
+                }
+
+
+                edits.Push(new Edit(diffs, (int) json.edits[0].ClientVersion, (int) json.edits[0].ServerVersion));
+                Console.WriteLine("Pushed edit...");
+
             }
 
-            return new PatchMessage(json.sender.ToString(), diffs, (int) json.clientVersion, (int) json.serverVersion);
+            return new PatchMessage(json.sender.ToString(), edits);
         }
     }
 }

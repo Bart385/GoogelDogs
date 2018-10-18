@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using OT.Entities;
+using Protocol;
 using Protocol.Messages;
 
 
@@ -32,7 +33,7 @@ namespace Client
             InitializeComponent();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             _previousEditorContent = TextEditor.Text;
-            Timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(500)};
+            Timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(1000)};
             Timer.Tick += Timer_Tick;
         }
 
@@ -43,7 +44,7 @@ namespace Client
                 _client.SendUpdatePatch(_previousEditorContent, TextEditor.Text);
             }
 
-            _previousEditorContent = TextEditor.Text;
+            
         }
 
         public void OnLogin()
@@ -118,18 +119,20 @@ namespace Client
 
         public void UpdateTextEditor(PatchMessage message)
         {
-            foreach (var diff in message.Diffs)
+            Edit edit = message.Edits.Pop();
+            if (edit.ServerVersion > _client.Document.ShadowCopy.ServerVersion)
             {
-                Console.WriteLine(diff);
+                // Update Server Shadow
+                List<Patch> patches = _client.DMP.patch_make(TextEditor.Text, edit.Diffs);
+                string updatedText = _client.DMP.patch_apply(patches, TextEditor.Text)[0].ToString();
+                Console.WriteLine(updatedText);
+                Dispatcher.Invoke(() =>
+                {
+                    TextEditor.Text = updatedText;
+                    _previousEditorContent = TextEditor.Text;
+                });
+                _client.Document.ShadowCopy.ServerVersion++;
             }
-
-            /*
-            List<Patch> patches = _client.DMP.patch_make(TextEditor.Text, message.Diffs);
-            Dispatcher.Invoke(() =>
-            {
-                TextEditor.Text = _client.DMP.patch_apply(patches, TextEditor.Text)[0].ToString();
-            });
-            */
         }
 
 

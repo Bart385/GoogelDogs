@@ -9,6 +9,7 @@
     <Import_RootNamespace>Protocol</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Edit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonDecoder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\ChatMessage.cs" />

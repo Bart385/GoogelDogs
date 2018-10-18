@@ -22,6 +22,7 @@ namespace Server.Net
         private readonly NetworkStream _stream;
         private readonly UserHandler _userHandler;
         private readonly DiffMatchPatch _dmp;
+        private readonly Stack<Edit> _edits;
 
         /// <summary>
         /// ClientHandler constructor
@@ -36,6 +37,7 @@ namespace Server.Net
             _stream = _client.GetStream();
             _joinSession = joinSession;
             _userHandler = userHandler;
+            _edits = new Stack<Edit>();
             StartBackgroundListener();
         }
 
@@ -111,7 +113,7 @@ namespace Server.Net
                             break;
                     }
                 }
-            });
+            }, TaskCreationOptions.LongRunning);
         }
 
         #region Handlers
@@ -173,28 +175,35 @@ namespace Server.Net
         /// <param name="message"></param>
         private void HandlePatchMessage(PatchMessage message)
         {
+            _edits.Clear();
+            Console.WriteLine(message);
+
+            Edit edit = message.Edits.Pop();
+            Console.WriteLine(edit.ClientVersion);
+            if (edit.ClientVersion > User.Document.ShadowCopy.ClientVersion || edit.ClientVersion == 0)
+            {
+                // Update Server Shadow
+                List<Patch> patches = _dmp.patch_make(User.Document.ShadowCopy.ShadowText, edit.Diffs);
+                User.Document.ShadowCopy.ShadowText =
+                    _dmp.patch_apply(patches, User.Document.ShadowCopy.ShadowText)[0].ToString();
+                Console.WriteLine($"The new shadow text = {User.Document.ShadowCopy.ShadowText}");
+                User.Document.ShadowCopy.ClientVersion++;
+                User.Document.BackupShadowCopy.BackupText = User.Document.ShadowCopy.ShadowText;
+
+                // Update Server Current
+                patches = _dmp.patch_make(Session.Document.CurrentText, edit.Diffs);
+                Session.Document.CurrentText = _dmp.patch_apply(patches, Session.Document.CurrentText)[0].ToString();
+                Console.WriteLine($"The new session text = {Session.Document.CurrentText}");
+            }
+
             /*
-            List<Patch> patches = _dmp.patch_make(Session.Document.ShadowCopy.ShadowText, message.Diffs);
-            Session.Document.ShadowCopy.ShadowText =
-                _dmp.patch_apply(patches, Session.Document.ShadowCopy.ShadowText)[0].ToString();
-            Session.Document.ShadowCopy.ClientVersion++;
-            Session.Document.BackupShadowCopy.BackupText = Session.Document.ShadowCopy.ShadowText;
-            patches = _dmp.patch_make(Session.Document.CurrentText, message.Diffs);
-            Session.Document.CurrentText =
-                _dmp.patch_apply(patches, Session.Document.CurrentText)[0].ToString();
-            Console.WriteLine($"Current server text = {Session.Document.CurrentText}");
+            // Generate new Diffs
+            List<Diff> diffs = _dmp.diff_main(User.Document.ShadowCopy.ShadowText, Session.Document.CurrentText);
+            _edits.Push(new Edit(diffs, User.Document.ShadowCopy.ClientVersion,
+                User.Document.ShadowCopy.ServerVersion));
+            SendMessage(new PatchMessage("Server", _edits));
+            User.Document.ShadowCopy.ServerVersion++;
             */
-
-            /*
-             Console.WriteLine($"Generating diffs for user: {User.Username}...");
-
-             List<Diff> diffs = _dmp.diff_main(User.Document.ShadowCopy.ShadowText, Session.Document.CurrentText);
-             _dmp.diff_cleanupSemantic(diffs);
-               SendMessage(new PatchMessage("Server", diffs, User.Document.ShadowCopy.ClientVersion,
-                   User.Document.ShadowCopy.ServerVersion));
-             User.Document.ShadowCopy.ServerVersion++;
-             Console.WriteLine($"Done generating diffs for user: {User.Username}.");
-             */
         }
 
         #endregion

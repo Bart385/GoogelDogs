@@ -22,6 +22,7 @@ namespace Client.Net
         private readonly Action<PatchMessage> _editorUpdateCallback;
         private readonly TcpClient _tcpClient;
         private readonly NetworkStream _stream;
+        private readonly Stack<Edit> _edits;
 
         public Client(string hostname, int port, Action loginCallback,
             Action<string, string> messageLogCallback, Action<PatchMessage> editorUpdateCallback)
@@ -34,6 +35,7 @@ namespace Client.Net
             Console.WriteLine(_tcpClient.Connected);
             _stream = _tcpClient.GetStream();
             DMP = new DiffMatchPatch();
+            _edits = new Stack<Edit>();
             StartBackgroundListener();
         }
 
@@ -41,24 +43,18 @@ namespace Client.Net
 
         public void Login(string username, string password, string session)
         {
-            Console.WriteLine("Logging in!");
             Username = username;
             SendMessage(new LoginMessage(username, password, session));
         }
 
         public void SendUpdatePatch(string previousText, string currentText)
         {
-            /*
-            Console.WriteLine("Generating diffs");
-            Document.CurrentText = currentText;
             List<Diff> diffs = DMP.diff_main(previousText, currentText);
             DMP.diff_cleanupSemantic(diffs);
-            SendMessage(new PatchMessage(Username, diffs, Document.ShadowCopy.ClientVersion,
-                Document.ShadowCopy.ServerVersion));
+            _edits.Push(new Edit(diffs, Document.ShadowCopy.ClientVersion, Document.ShadowCopy.ServerVersion));
+            SendMessage(new PatchMessage(Username, _edits));
             Document.ShadowCopy.ClientVersion++;
-            Document.ShadowCopy.ShadowText = Document.CurrentText;
-            Console.WriteLine("Done sending patch");
-            */
+            _edits.Clear();
         }
 
         public void SendChatMessage(string message)
@@ -112,7 +108,7 @@ namespace Client.Net
                             break;
                     }
                 }
-            });
+            }, TaskCreationOptions.LongRunning);
         }
 
         #region Handlers
@@ -140,6 +136,7 @@ namespace Client.Net
 
         private void HandlePatchMessage(PatchMessage message)
         {
+            _edits.Clear();
             _editorUpdateCallback(message);
         }
 
