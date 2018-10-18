@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using DiffMatchPatch;
+using OT.Entities;
 using Protocol.Messages;
 
 namespace Protocol

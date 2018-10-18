@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using DiffMatchPatch;
 using Newtonsoft.Json;
+using OT.Entities;
 
 namespace Protocol.Messages
 {

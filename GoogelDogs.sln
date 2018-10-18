@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csp
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Protocol", "Protocol\Protocol.shproj", "{864EE0FE-26F7-4FC6-82C0-18C7F6A52493}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffMatchPatch", "DiffMatchPatch\DiffMatchPatch.csproj", "{6CB9EE76-CF49-48B1-AC53-BEB7F5CBFD3E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OT", "DiffMatchPatch\OT.csproj", "{6CB9EE76-CF49-48B1-AC53-BEB7F5CBFD3E}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

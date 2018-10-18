@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Client.Entities;
-using DiffMatchPatch;
+using OT.Business;
+using OT.Entities;
 using Protocol;
 using Protocol.Messages;
 
@@ -14,7 +15,7 @@ namespace Client.Net
         public string Username { get; set; }
         public bool Running { get; set; } = true;
         public Document Document { get; }
-        public diff_match_patch DMP { get; }
+        public DiffMatchPatch DMP { get; }
 
         private readonly Action _loginCallback;
         private readonly Action<string, string> _messageLogCallback;
@@ -32,7 +33,7 @@ namespace Client.Net
             _tcpClient = new TcpClient(hostname, port);
             Console.WriteLine(_tcpClient.Connected);
             _stream = _tcpClient.GetStream();
-            DMP = new diff_match_patch();
+            DMP = new DiffMatchPatch();
             StartBackgroundListener();
         }
 
@@ -50,6 +51,7 @@ namespace Client.Net
             Console.WriteLine("Generating diffs");
             Document.CurrentText = currentText;
             List<Diff> diffs = DMP.diff_main(previousText, currentText);
+            DMP.diff_cleanupSemantic(diffs);
             SendMessage(new PatchMessage(Username, diffs, Document.ShadowCopy.ClientVersion,
                 Document.ShadowCopy.ServerVersion));
             Document.ShadowCopy.ClientVersion++;

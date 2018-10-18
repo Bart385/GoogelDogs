@@ -108,9 +108,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiffMatchPatch\DiffMatchPatch.csproj">
+    <ProjectReference Include="..\DiffMatchPatch\OT.csproj">
       <Project>{6cb9ee76-cf49-48b1-ac53-beb7f5cbfd3e}</Project>
-      <Name>DiffMatchPatch</Name>
+      <Name>OT</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

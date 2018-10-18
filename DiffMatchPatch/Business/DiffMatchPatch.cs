@@ -1,20 +1,4 @@
-﻿/*
- * Diff Match and Patch
- * Copyright 2018 The diff-match-patch Authors.
- * https://github.com/google/diff-match-patch
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+﻿
 
 using System;
 using System.Collections.Generic;
@@ -22,8 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using OT.Entities;
 
-namespace DiffMatchPatch
+namespace OT.Business
 {
     internal static class CompatibilityExtensions
     {
@@ -45,174 +30,12 @@ namespace DiffMatchPatch
         }
     }
 
-    /**-
-     * The data structure representing a diff is a List of Diff objects:
-     * {Diff(Operation.DELETE, "Hello"), Diff(Operation.INSERT, "Goodbye"),
-     *  Diff(Operation.EQUAL, " world.")}
-     * which means: delete "Hello", add "Goodbye" and keep " world."
-     */
-    public enum Operation
-    {
-        DELETE,
-        INSERT,
-        EQUAL
-    }
-
-
-    /**
-     * Class representing one diff operation.
-     */
-    public class Diff
-    {
-        public Operation operation;
-
-        // One of: INSERT, DELETE or EQUAL.
-        public string text;
-        // The text associated with this diff operation.
-
-        /**
-         * Constructor.  Initializes the diff with the provided values.
-         * @param operation One of INSERT, DELETE or EQUAL.
-         * @param text The text being applied.
-         */
-        public Diff(Operation operation, string text)
-        {
-            // Construct a diff with the specified operation and text.
-            this.operation = operation;
-            this.text = text;
-        }
-
-        /**
-         * Display a human-readable version of this Diff.
-         * @return text version.
-         */
-        public override string ToString()
-        {
-            string prettyText = this.text.Replace('\n', '\u00b6');
-            return "Diff(" + this.operation + ",\"" + prettyText + "\")";
-        }
-
-        /**
-         * Is this Diff equivalent to another Diff?
-         * @param d Another Diff to compare against.
-         * @return true or false.
-         */
-        public override bool Equals(Object obj)
-        {
-            // If parameter is null return false.
-            if (obj == null)
-            {
-                return false;
-            }
-
-            // If parameter cannot be cast to Diff return false.
-            Diff p = obj as Diff;
-            if ((System.Object) p == null)
-            {
-                return false;
-            }
-
-            // Return true if the fields match.
-            return p.operation == this.operation && p.text == this.text;
-        }
-
-        public bool Equals(Diff obj)
-        {
-            // If parameter is null return false.
-            if (obj == null)
-            {
-                return false;
-            }
-
-            // Return true if the fields match.
-            return obj.operation == this.operation && obj.text == this.text;
-        }
-
-        public override int GetHashCode()
-        {
-            return text.GetHashCode() ^ operation.GetHashCode();
-        }
-    }
-
-
-    /**
-     * Class representing one patch operation.
-     */
-    public class Patch
-    {
-        public List<Diff> diffs = new List<Diff>();
-        public int start1;
-        public int start2;
-        public int length1;
-        public int length2;
-
-        /**
-         * Emulate GNU diff's format.
-         * Header: @@ -382,8 +481,9 @@
-         * Indices are printed as 1-based, not 0-based.
-         * @return The GNU diff string.
-         */
-        public override string ToString()
-        {
-            string coords1, coords2;
-            if (this.length1 == 0)
-            {
-                coords1 = this.start1 + ",0";
-            }
-            else if (this.length1 == 1)
-            {
-                coords1 = Convert.ToString(this.start1 + 1);
-            }
-            else
-            {
-                coords1 = (this.start1 + 1) + "," + this.length1;
-            }
-
-            if (this.length2 == 0)
-            {
-                coords2 = this.start2 + ",0";
-            }
-            else if (this.length2 == 1)
-            {
-                coords2 = Convert.ToString(this.start2 + 1);
-            }
-            else
-            {
-                coords2 = (this.start2 + 1) + "," + this.length2;
-            }
-
-            StringBuilder text = new StringBuilder();
-            text.Append("@@ -").Append(coords1).Append(" +").Append(coords2)
-                .Append(" @@\n");
-            // Escape the body of the patch with %xx notation.
-            foreach (Diff aDiff in this.diffs)
-            {
-                switch (aDiff.operation)
-                {
-                    case Operation.INSERT:
-                        text.Append('+');
-                        break;
-                    case Operation.DELETE:
-                        text.Append('-');
-                        break;
-                    case Operation.EQUAL:
-                        text.Append(' ');
-                        break;
-                }
-
-                text.Append(diff_match_patch.encodeURI(aDiff.text)).Append("\n");
-            }
-
-            return text.ToString();
-        }
-    }
-
 
     /**
      * Class containing the diff, match and patch methods.
      * Also Contains the behaviour settings.
      */
-    public class diff_match_patch
+    public class DiffMatchPatch
     {
         // Defaults.
         // Set these on your diff_match_patch instance to override the defaults.

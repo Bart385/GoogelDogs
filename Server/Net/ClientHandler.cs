@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using DiffMatchPatch;
+using OT.Business;
+using OT.Entities;
 using Protocol;
 using Protocol.Messages;
 using Server.Business;
@@ -20,12 +21,12 @@ namespace Server.Net
         private readonly TcpClient _client;
         private readonly NetworkStream _stream;
         private readonly UserHandler _userHandler;
-        private readonly diff_match_patch _dmp;
+        private readonly DiffMatchPatch _dmp;
 
         private ClientHandler(TcpClient client, UserHandler userHandler, Action<int, ClientHandler> joinSession)
         {
             _client = client;
-            _dmp = new diff_match_patch();
+            _dmp = new DiffMatchPatch();
             _stream = _client.GetStream();
             _joinSession = joinSession;
             _userHandler = userHandler;
