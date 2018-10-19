@@ -196,7 +196,7 @@ namespace Server.Net
                 Console.WriteLine($"The new session text = {Session.Document.CurrentText}");
             }
 
-            List<Diff> diffs = _dmp.diff_main(User.Document.ShadowCopy.ShadowText, Session.Document.CurrentText);
+            List<Diff> diffs = _dmp.diff_main(User.Document.ShadowCopy.ShadowText, Session.Document.CurrentText, false);
             _dmp.diff_cleanupSemantic(diffs);
             _edits.Push(new Edit(diffs, User.Document.ShadowCopy.ClientVersion,
                 User.Document.ShadowCopy.ServerVersion));

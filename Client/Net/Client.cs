@@ -49,7 +49,7 @@ namespace Client.Net
 
         public void SendUpdatePatch(string previousText, string currentText)
         {
-            List<Diff> diffs = DMP.diff_main(previousText, currentText);
+            List<Diff> diffs = DMP.diff_main(previousText, currentText, false);
             DMP.diff_cleanupSemantic(diffs);
             _edits.Push(new Edit(diffs, Document.ShadowCopy.ClientVersion, Document.ShadowCopy.ServerVersion));
             SendMessage(new PatchMessage(Username, _edits));

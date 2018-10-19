@@ -39,11 +39,13 @@ namespace Client
 
         private void Timer_Tick(object sender, EventArgs e)
         {
+            
             //if (_previousEditorContent != TextEditor.Text)
             _client.SendUpdatePatch(_previousEditorContent, TextEditor.Text);
 
 
             _previousEditorContent = TextEditor.Text;
+            
         }
 
         public void OnLogin()
@@ -100,6 +102,7 @@ namespace Client
         private void TextEditor_OnTextChanged(object sender, TextChangedEventArgs e)
         {
             File.WriteAllText($"{Path.GetTempPath()}{_uuid}_GoogelDogs_local_cache.txt", TextEditor.Text);
+            
         }
 
         private void ChatBox_OnKeyDown(object sender, KeyEventArgs e)
