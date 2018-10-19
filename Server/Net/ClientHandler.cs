@@ -197,7 +197,6 @@ namespace Server.Net
                     catch (ArgumentOutOfRangeException e)
                     {
                         Console.WriteLine(e);
-                        // User.Document.ShadowCopy.ShadowText = Session.Document.CurrentText;
                         succes = false;
                     }
 

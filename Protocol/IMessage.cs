@@ -14,6 +14,7 @@ namespace Protocol
     {
         CHAT_MESSAGE,
         PATCH_MESSAGE,
+        PATCH_ERROR_MESSAGE,
         OK_MESSAGE,
         ERROR_MESSAGE,
         LOGIN_MESSAGE,

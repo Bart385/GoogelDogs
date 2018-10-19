@@ -17,6 +17,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messages\LoginMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\OkLoginMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\OkMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\PatchErrorMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\PatchMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MessagingUtil.cs" />
   </ItemGroup>
