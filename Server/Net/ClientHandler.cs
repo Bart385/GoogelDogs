@@ -177,13 +177,13 @@ namespace Server.Net
         private void HandlePatchMessage(PatchMessage message)
         {
             _edits.Clear();
-
             Edit edit = message.Edits.Pop();
             Task.Factory.StartNew(() =>
             {
                 if (edit.ClientVersion > User.Document.ShadowCopy.ClientVersion || edit.ClientVersion == 0)
                 {
                     // Update Server Shadow 
+                    bool succes;
                     List<Patch> patches;
                     try
                     {
@@ -192,17 +192,22 @@ namespace Server.Net
                             _dmp.patch_apply(patches, User.Document.ShadowCopy.ShadowText)[0].ToString();
                         //User.Document.ShadowCopy.ClientVersion++;
                         User.Document.BackupShadowCopy.BackupText = User.Document.ShadowCopy.ShadowText;
+                        succes = true;
+                    }
+                    catch (ArgumentOutOfRangeException e)
+                    {
+                        Console.WriteLine(e);
+                        // User.Document.ShadowCopy.ShadowText = Session.Document.CurrentText;
+                        succes = false;
+                    }
 
+                    if (succes)
+                    {
                         // Update Server Current
                         patches = _dmp.patch_make(Session.Document.CurrentText, edit.Diffs);
                         Session.Document.CurrentText =
                             _dmp.patch_apply(patches, Session.Document.CurrentText)[0].ToString();
                         Console.WriteLine($"Updated client: {User.Username}");
-                    }
-                    catch (ArgumentOutOfRangeException e)
-                    {
-                        Console.WriteLine(e);
-                        User.Document.ShadowCopy.ShadowText = Session.Document.CurrentText;
                     }
                 }
             }).ContinueWith((result) =>
