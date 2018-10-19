@@ -206,7 +206,8 @@ namespace Server.Net
                         patches = _dmp.patch_make(Session.Document.CurrentText, edit.Diffs);
                         Session.Document.CurrentText =
                             _dmp.patch_apply(patches, Session.Document.CurrentText)[0].ToString();
-                        Console.WriteLine($"Updated client: {User.Username}");
+                        Console.WriteLine(
+                            $"Updated client: {User.Username}, With test: {Session.Document.CurrentText}");
                     }
                 }
             }).ContinueWith((result) =>
