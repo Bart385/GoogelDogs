@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using OT.Entities;
@@ -44,21 +45,34 @@ namespace Protocol
 
         private static PatchMessage DecodeToPatchMessage(dynamic json)
         {
+            /* Stack<Edit> edits = new Stack<Edit>();
+             for (var i = json.edits.Count; i > 0; i--)
+             {
+                 Console.WriteLine("In for loop...{0}", i);
+                 List<Diff> diffs = new List<Diff>();
+                 foreach (var diff in json.edits[0].Diffs)
+                 {
+                     Console.WriteLine("In diff loop...");
+                     diffs.Add(new Diff((Operation) diff.operation, diff.text.ToString()));
+                 }
+ 
+ 
+                 edits.Push(new Edit(diffs, (int) json.edits[0].ClientVersion, (int) json.edits[0].ServerVersion));
+                 Console.WriteLine("Pushed edit...");
+             }
+             */
+            Console.WriteLine("Decoding to Patch Message...");
             Stack<Edit> edits = new Stack<Edit>();
-            for (var i = json.edits.Count; i > 0; i--)
+
+            foreach (var edit in json.edits)
             {
-                Console.WriteLine("In for loop...{0}", i);
                 List<Diff> diffs = new List<Diff>();
-                foreach (var diff in json.edits[0].Diffs)
+                foreach (var diff in edit.Diffs)
                 {
-                    Console.WriteLine("In diff loop...");
                     diffs.Add(new Diff((Operation) diff.operation, diff.text.ToString()));
                 }
 
-
-                edits.Push(new Edit(diffs, (int) json.edits[0].ClientVersion, (int) json.edits[0].ServerVersion));
-                Console.WriteLine("Pushed edit...");
-
+                edits.Push(new Edit(diffs, (int) edit.ClientVersion, (int) edit.ServerVersion));
             }
 
             return new PatchMessage(json.sender.ToString(), edits);

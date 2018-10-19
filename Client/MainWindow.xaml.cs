@@ -39,12 +39,11 @@ namespace Client
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            if (_previousEditorContent != TextEditor.Text)
-            {
-                _client.SendUpdatePatch(_previousEditorContent, TextEditor.Text);
-            }
+            //if (_previousEditorContent != TextEditor.Text)
+            _client.SendUpdatePatch(_previousEditorContent, TextEditor.Text);
 
-            
+
+            _previousEditorContent = TextEditor.Text;
         }
 
         public void OnLogin()
@@ -120,19 +119,23 @@ namespace Client
         public void UpdateTextEditor(PatchMessage message)
         {
             Edit edit = message.Edits.Pop();
-            if (edit.ServerVersion > _client.Document.ShadowCopy.ServerVersion)
+            Console.WriteLine($"Server version in the edit = {edit.ServerVersion}");
+
+            Dispatcher.Invoke(() =>
             {
+                string currentText = TextEditor.Text;
+                Console.WriteLine($"Current text = {currentText}");
                 // Update Server Shadow
-                List<Patch> patches = _client.DMP.patch_make(TextEditor.Text, edit.Diffs);
-                string updatedText = _client.DMP.patch_apply(patches, TextEditor.Text)[0].ToString();
-                Console.WriteLine(updatedText);
-                Dispatcher.Invoke(() =>
-                {
-                    TextEditor.Text = updatedText;
-                    _previousEditorContent = TextEditor.Text;
-                });
-                _client.Document.ShadowCopy.ServerVersion++;
-            }
+                List<Patch> patches = _client.DMP.patch_make(currentText, edit.Diffs);
+                Console.WriteLine("Created patches");
+                string updatedText = _client.DMP.patch_apply(patches, currentText)[0].ToString();
+                Console.WriteLine($"Updated text = {updatedText}");
+                TextEditor.Text = updatedText;
+                _previousEditorContent = TextEditor.Text;
+            });
+
+
+            //_client.Document.ShadowCopy.ServerVersion++;
         }
 
 

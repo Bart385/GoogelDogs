@@ -91,7 +91,6 @@ namespace Server.Net
                         return;
                     }
 
-                    Console.WriteLine(msg);
                     IMessage message = JsonDecoder.Decode(msg);
                     Console.WriteLine(message.Type);
                     switch (message.Type)
@@ -176,10 +175,11 @@ namespace Server.Net
         private void HandlePatchMessage(PatchMessage message)
         {
             _edits.Clear();
-            Console.WriteLine(message);
+            Console.WriteLine($"Handling Patch message: {message}");
 
             Edit edit = message.Edits.Pop();
             Console.WriteLine(edit.ClientVersion);
+
             if (edit.ClientVersion > User.Document.ShadowCopy.ClientVersion || edit.ClientVersion == 0)
             {
                 // Update Server Shadow
@@ -187,7 +187,7 @@ namespace Server.Net
                 User.Document.ShadowCopy.ShadowText =
                     _dmp.patch_apply(patches, User.Document.ShadowCopy.ShadowText)[0].ToString();
                 Console.WriteLine($"The new shadow text = {User.Document.ShadowCopy.ShadowText}");
-                User.Document.ShadowCopy.ClientVersion++;
+                //User.Document.ShadowCopy.ClientVersion++;
                 User.Document.BackupShadowCopy.BackupText = User.Document.ShadowCopy.ShadowText;
 
                 // Update Server Current
@@ -196,14 +196,13 @@ namespace Server.Net
                 Console.WriteLine($"The new session text = {Session.Document.CurrentText}");
             }
 
-            /*
-            // Generate new Diffs
             List<Diff> diffs = _dmp.diff_main(User.Document.ShadowCopy.ShadowText, Session.Document.CurrentText);
+            _dmp.diff_cleanupSemantic(diffs);
             _edits.Push(new Edit(diffs, User.Document.ShadowCopy.ClientVersion,
                 User.Document.ShadowCopy.ServerVersion));
             SendMessage(new PatchMessage("Server", _edits));
-            User.Document.ShadowCopy.ServerVersion++;
-            */
+            User.Document.ShadowCopy.ShadowText = Session.Document.CurrentText;
+            _edits.Clear();
         }
 
         #endregion
