@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -2038,6 +2036,7 @@ namespace OT.Business
                     patch.start1 = char_count1;
                     patch.start2 = char_count2;
                 }
+
 
                 switch (aDiff.operation)
                 {

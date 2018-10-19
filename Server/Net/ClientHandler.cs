@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using OT.Business;
 using OT.Entities;
@@ -23,6 +24,7 @@ namespace Server.Net
         private readonly UserHandler _userHandler;
         private readonly DiffMatchPatch _dmp;
         private readonly Stack<Edit> _edits;
+
 
         /// <summary>
         /// ClientHandler constructor
@@ -175,34 +177,45 @@ namespace Server.Net
         private void HandlePatchMessage(PatchMessage message)
         {
             _edits.Clear();
-            Console.WriteLine($"Handling Patch message: {message}");
 
             Edit edit = message.Edits.Pop();
-            Console.WriteLine(edit.ClientVersion);
-
-            if (edit.ClientVersion > User.Document.ShadowCopy.ClientVersion || edit.ClientVersion == 0)
+            Task.Factory.StartNew(() =>
             {
-                // Update Server Shadow
-                List<Patch> patches = _dmp.patch_make(User.Document.ShadowCopy.ShadowText, edit.Diffs);
-                User.Document.ShadowCopy.ShadowText =
-                    _dmp.patch_apply(patches, User.Document.ShadowCopy.ShadowText)[0].ToString();
-                Console.WriteLine($"The new shadow text = {User.Document.ShadowCopy.ShadowText}");
-                //User.Document.ShadowCopy.ClientVersion++;
-                User.Document.BackupShadowCopy.BackupText = User.Document.ShadowCopy.ShadowText;
+                if (edit.ClientVersion > User.Document.ShadowCopy.ClientVersion || edit.ClientVersion == 0)
+                {
+                    // Update Server Shadow 
+                    List<Patch> patches;
+                    try
+                    {
+                        patches = _dmp.patch_make(User.Document.ShadowCopy.ShadowText, edit.Diffs);
+                        User.Document.ShadowCopy.ShadowText =
+                            _dmp.patch_apply(patches, User.Document.ShadowCopy.ShadowText)[0].ToString();
+                        //User.Document.ShadowCopy.ClientVersion++;
+                        User.Document.BackupShadowCopy.BackupText = User.Document.ShadowCopy.ShadowText;
 
-                // Update Server Current
-                patches = _dmp.patch_make(Session.Document.CurrentText, edit.Diffs);
-                Session.Document.CurrentText = _dmp.patch_apply(patches, Session.Document.CurrentText)[0].ToString();
-                Console.WriteLine($"The new session text = {Session.Document.CurrentText}");
-            }
-
-            List<Diff> diffs = _dmp.diff_main(User.Document.ShadowCopy.ShadowText, Session.Document.CurrentText, false);
-            _dmp.diff_cleanupSemantic(diffs);
-            _edits.Push(new Edit(diffs, User.Document.ShadowCopy.ClientVersion,
-                User.Document.ShadowCopy.ServerVersion));
-            SendMessage(new PatchMessage("Server", _edits));
-            User.Document.ShadowCopy.ShadowText = Session.Document.CurrentText;
-            _edits.Clear();
+                        // Update Server Current
+                        patches = _dmp.patch_make(Session.Document.CurrentText, edit.Diffs);
+                        Session.Document.CurrentText =
+                            _dmp.patch_apply(patches, Session.Document.CurrentText)[0].ToString();
+                        Console.WriteLine($"Updated client: {User.Username}");
+                    }
+                    catch (ArgumentOutOfRangeException e)
+                    {
+                        Console.WriteLine(e);
+                        User.Document.ShadowCopy.ShadowText = Session.Document.CurrentText;
+                    }
+                }
+            }).ContinueWith((result) =>
+            {
+                List<Diff> diffs = _dmp.diff_main(User.Document.ShadowCopy.ShadowText, Session.Document.CurrentText,
+                    false);
+                _dmp.diff_cleanupEfficiency(diffs);
+                _edits.Push(new Edit(diffs, User.Document.ShadowCopy.ClientVersion,
+                    User.Document.ShadowCopy.ServerVersion));
+                SendMessage(new PatchMessage("Server", _edits));
+                User.Document.ShadowCopy.ShadowText = Session.Document.CurrentText;
+                _edits.Clear();
+            });
         }
 
         #endregion
