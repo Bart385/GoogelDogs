@@ -140,6 +140,7 @@ namespace Client
                 {
                     Console.WriteLine(e);
                     _previousEditorContent = TextEditor.Text;
+                    _client.SendOutOfSyncMessage();
                 }
             });
 
@@ -147,11 +148,11 @@ namespace Client
             //_client.Document.ShadowCopy.ServerVersion++;
         }
 
-        public void RecoverUpdateTextEditor(PatchErrorMessage message)
+        public void RecoverUpdateTextEditor(string currentServerText)
         {
             Dispatcher.Invoke(() =>
             {
-                TextEditor.Text = message.CurrentSessionText;
+                TextEditor.Text = currentServerText;
                 _previousEditorContent = TextEditor.Text;
             });
         }

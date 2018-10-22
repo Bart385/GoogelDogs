@@ -26,6 +26,10 @@ namespace Protocol
                     return DecodeToLoginMessage(json);
                 case MessageType.OK_LOGIN_MESSAGE:
                     return DecodeToOkLoginMessage(json);
+                case MessageType.OUT_OF_SYNC_MESSAGE:
+                    return DecodeToOutOfSyncMessage(json);
+                case MessageType.OUT_OF_SYNC_RESPONSE:
+                    return DecodeToOutOfSyncResponse(json);
                 default:
                     return null;
             }
@@ -33,6 +37,10 @@ namespace Protocol
 
         private static OkMessage DecodeToOkMessage(dynamic json) => new OkMessage();
         private static ErrorMessage DecodeToErrorMessage(dynamic json) => new ErrorMessage(json.message.ToString());
+        private static OutOfSyncMessage DecodeToOutOfSyncMessage(dynamic json) => new OutOfSyncMessage();
+
+        private static OutOfSyncResponse DecodeToOutOfSyncResponse(dynamic json) =>
+            new OutOfSyncResponse(json.currentServerText.ToString());
 
         private static LoginMessage DecodeToLoginMessage(dynamic json) => new LoginMessage(json.username.ToString(),
             json.password.ToString(), json.sessionId.ToString());

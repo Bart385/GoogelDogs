@@ -7,16 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{293F9E51-9A89-4C38-B3E6-96335127F4FA}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Protocol", "Protocol\Protocol.shproj", "{864EE0FE-26F7-4FC6-82C0-18C7F6A52493}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OT", "DiffMatchPatch\OT.csproj", "{6CB9EE76-CF49-48B1-AC53-BEB7F5CBFD3E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protocol", "Protocol\Protocol.csproj", "{725AE737-5975-41A2-821E-887971B2FA66}"
+EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Protocol\Protocol.projitems*{293f9e51-9a89-4c38-b3e6-96335127f4fa}*SharedItemsImports = 4
-		Protocol\Protocol.projitems*{5e3d70f8-005f-4624-a21b-31f5f75f7712}*SharedItemsImports = 4
-		Protocol\Protocol.projitems*{864ee0fe-26f7-4fc6-82c0-18c7f6a52493}*SharedItemsImports = 13
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -34,6 +29,10 @@ Global
 		{6CB9EE76-CF49-48B1-AC53-BEB7F5CBFD3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CB9EE76-CF49-48B1-AC53-BEB7F5CBFD3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CB9EE76-CF49-48B1-AC53-BEB7F5CBFD3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{725AE737-5975-41A2-821E-887971B2FA66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{725AE737-5975-41A2-821E-887971B2FA66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{725AE737-5975-41A2-821E-887971B2FA66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{725AE737-5975-41A2-821E-887971B2FA66}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

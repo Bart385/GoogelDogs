@@ -20,14 +20,14 @@ namespace Client.Net
         private readonly Action _loginCallback;
         private readonly Action<string, string> _messageLogCallback;
         private readonly Action<PatchMessage> _editorUpdateCallback;
-        private readonly Action<PatchErrorMessage> _editorRecoverUpdateCallback;
+        private readonly Action<string> _editorRecoverUpdateCallback;
         private readonly TcpClient _tcpClient;
         private readonly NetworkStream _stream;
         private readonly Stack<Edit> _edits;
 
         public Client(string hostname, int port, Action loginCallback,
             Action<string, string> messageLogCallback, Action<PatchMessage> editorUpdateCallback,
-            Action<PatchErrorMessage> editorRecoverUpdateCallback)
+            Action<string> editorRecoverUpdateCallback)
         {
             _loginCallback = loginCallback;
             _messageLogCallback = messageLogCallback;
@@ -58,6 +58,11 @@ namespace Client.Net
             SendMessage(new PatchMessage(Username, _edits));
             Document.ShadowCopy.ClientVersion++;
             _edits.Clear();
+        }
+
+        public void SendOutOfSyncMessage()
+        {
+            SendMessage(new OutOfSyncMessage());
         }
 
         public void SendChatMessage(string message)
@@ -112,6 +117,9 @@ namespace Client.Net
                         case MessageType.PATCH_ERROR_MESSAGE:
                             HandlePatchErrorMessage((PatchErrorMessage) message);
                             break;
+                        case MessageType.OUT_OF_SYNC_RESPONSE:
+                            HandleOutOfSyncResponse((OutOfSyncResponse) message);
+                            break;
                     }
                 }
             }, TaskCreationOptions.LongRunning);
@@ -148,7 +156,12 @@ namespace Client.Net
 
         private void HandlePatchErrorMessage(PatchErrorMessage message)
         {
-            _editorRecoverUpdateCallback(message);
+            //_editorRecoverUpdateCallback(message);
+        }
+
+        private void HandleOutOfSyncResponse(OutOfSyncResponse message)
+        {
+            _editorRecoverUpdateCallback(message.CurrentServerText);
         }
 
         #endregion

@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{293F9E51-9A89-4C38-B3E6-96335127F4FA}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>Server</RootNamespace>
-    <AssemblyName>Server</AssemblyName>
+    <ProjectGuid>{725AE737-5975-41A2-821E-887971B2FA66}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Protocol</RootNamespace>
+    <AssemblyName>Protocol</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -46,34 +44,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Business\FileHandler.cs" />
-    <Compile Include="Business\UserAuthenticator.cs" />
-    <Compile Include="Business\UserHandler.cs" />
-    <Compile Include="Entities\Document.cs" />
-    <Compile Include="Business\Session.cs" />
-    <Compile Include="Entities\User.cs" />
-    <Compile Include="Net\ClientHandler.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Edit.cs" />
+    <Compile Include="IMessage.cs" />
+    <Compile Include="JsonDecoder.cs" />
+    <Compile Include="Messages\ChatMessage.cs" />
+    <Compile Include="Messages\ErrorMessage.cs" />
+    <Compile Include="Messages\LoginMessage.cs" />
+    <Compile Include="Messages\OkLoginMessage.cs" />
+    <Compile Include="Messages\OkMessage.cs" />
+    <Compile Include="Messages\OutOfSyncMessage.cs" />
+    <Compile Include="Messages\OutOfSyncResponse.cs" />
+    <Compile Include="Messages\PatchErrorMessage.cs" />
+    <Compile Include="Messages\PatchMessage.cs" />
+    <Compile Include="MessagingUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Net\Server.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-    <None Include="resources\Accounts.conf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiffMatchPatch\OT.csproj">
       <Project>{6cb9ee76-cf49-48b1-ac53-beb7f5cbfd3e}</Project>
       <Name>OT</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Protocol\Protocol.csproj">
-      <Project>{725ae737-5975-41a2-821e-887971b2fa66}</Project>
-      <Name>Protocol</Name>
-    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -112,8 +112,11 @@
       <Project>{6cb9ee76-cf49-48b1-ac53-beb7f5cbfd3e}</Project>
       <Name>OT</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Protocol\Protocol.csproj">
+      <Project>{725ae737-5975-41a2-821e-887971b2fa66}</Project>
+      <Name>Protocol</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
-  <Import Project="..\Protocol\Protocol.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

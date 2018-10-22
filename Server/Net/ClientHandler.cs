@@ -112,6 +112,9 @@ namespace Server.Net
                         case MessageType.PATCH_MESSAGE:
                             HandlePatchMessage((PatchMessage) message);
                             break;
+                        case MessageType.OUT_OF_SYNC_MESSAGE:
+                            HandleOutOfSyncMessage((OutOfSyncMessage) message);
+                            break;
                     }
                 }
             }, TaskCreationOptions.LongRunning);
@@ -198,6 +201,7 @@ namespace Server.Net
                     {
                         Console.WriteLine(e);
                         success = false;
+                        Session.BroadCastOutOfSyncResponse(Session.Document.CurrentText);
                     }
 
                     if (success)
@@ -221,6 +225,11 @@ namespace Server.Net
                 User.Document.ShadowCopy.ShadowText = Session.Document.CurrentText;
                 _edits.Clear();
             });
+        }
+
+        private void HandleOutOfSyncMessage(OutOfSyncMessage message)
+        {
+            Session.BroadCastOutOfSyncResponse(Session.Document.CurrentText);
         }
 
         #endregion

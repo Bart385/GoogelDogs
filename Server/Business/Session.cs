@@ -53,15 +53,11 @@ namespace Server.Business
             }
         }
 
-        /// <summary>
-        /// Broadcasts a patch message to all clients connected to the current session.
-        /// </summary>
-        /// <param name="message"></param>
-        public void BroadCastPatchMessage(PatchMessage message)
+        public void BroadCastOutOfSyncResponse(string currentServerText)
         {
             foreach (var client in _clients)
             {
-                client.SendMessage(message);
+                client.SendMessage(new OutOfSyncResponse(currentServerText));
             }
         }
     }
