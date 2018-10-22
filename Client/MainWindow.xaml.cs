@@ -26,7 +26,8 @@ namespace Client
 
         public MainWindow()
         {
-            _client = new Net.Client("127.0.0.1", 1337, OnLogin, AddMessageToLog, UpdateTextEditor);
+            _client = new Net.Client("127.0.0.1", 1337, OnLogin, AddMessageToLog, UpdateTextEditor,
+                RecoverUpdateTextEditor);
             _login = new LoginWindow(_client, this);
             _login.Show();
             this.Hide();
@@ -144,6 +145,15 @@ namespace Client
 
 
             //_client.Document.ShadowCopy.ServerVersion++;
+        }
+
+        public void RecoverUpdateTextEditor(PatchErrorMessage message)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                TextEditor.Text = message.CurrentSessionText;
+                _previousEditorContent = TextEditor.Text;
+            });
         }
 
 

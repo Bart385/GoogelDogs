@@ -20,16 +20,19 @@ namespace Client.Net
         private readonly Action _loginCallback;
         private readonly Action<string, string> _messageLogCallback;
         private readonly Action<PatchMessage> _editorUpdateCallback;
+        private readonly Action<PatchErrorMessage> _editorRecoverUpdateCallback;
         private readonly TcpClient _tcpClient;
         private readonly NetworkStream _stream;
         private readonly Stack<Edit> _edits;
 
         public Client(string hostname, int port, Action loginCallback,
-            Action<string, string> messageLogCallback, Action<PatchMessage> editorUpdateCallback)
+            Action<string, string> messageLogCallback, Action<PatchMessage> editorUpdateCallback,
+            Action<PatchErrorMessage> editorRecoverUpdateCallback)
         {
             _loginCallback = loginCallback;
             _messageLogCallback = messageLogCallback;
             _editorUpdateCallback = editorUpdateCallback;
+            _editorRecoverUpdateCallback = editorRecoverUpdateCallback;
             Document = new Document();
             _tcpClient = new TcpClient(hostname, port);
             Console.WriteLine(_tcpClient.Connected);
@@ -106,6 +109,9 @@ namespace Client.Net
                         case MessageType.PATCH_MESSAGE:
                             HandlePatchMessage((PatchMessage) message);
                             break;
+                        case MessageType.PATCH_ERROR_MESSAGE:
+                            HandlePatchErrorMessage((PatchErrorMessage) message);
+                            break;
                     }
                 }
             }, TaskCreationOptions.LongRunning);
@@ -138,6 +144,11 @@ namespace Client.Net
         {
             _edits.Clear();
             _editorUpdateCallback(message);
+        }
+
+        private void HandlePatchErrorMessage(PatchErrorMessage message)
+        {
+            _editorRecoverUpdateCallback(message);
         }
 
         #endregion

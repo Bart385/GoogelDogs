@@ -8,12 +8,10 @@ namespace Protocol.Messages
     public class PatchErrorMessage : IMessage
     {
         public MessageType Type { get; } = MessageType.PATCH_ERROR_MESSAGE;
-        public string CurrentUserText { get; }
         public string CurrentSessionText { get; }
 
-        public PatchErrorMessage(string currentUserText, string currentSessionText)
+        public PatchErrorMessage(string currentSessionText)
         {
-            CurrentUserText = currentUserText;
             CurrentSessionText = currentSessionText;
         }
 
@@ -22,7 +20,6 @@ namespace Protocol.Messages
             dynamic json = new
             {
                 type = Type,
-                currentUserText = CurrentSessionText,
                 currentSessionText = CurrentSessionText
             };
 

@@ -183,7 +183,7 @@ namespace Server.Net
                 if (edit.ClientVersion > User.Document.ShadowCopy.ClientVersion || edit.ClientVersion == 0)
                 {
                     // Update Server Shadow 
-                    bool succes;
+                    bool success;
                     List<Patch> patches;
                     try
                     {
@@ -192,15 +192,15 @@ namespace Server.Net
                             _dmp.patch_apply(patches, User.Document.ShadowCopy.ShadowText)[0].ToString();
                         //User.Document.ShadowCopy.ClientVersion++;
                         User.Document.BackupShadowCopy.BackupText = User.Document.ShadowCopy.ShadowText;
-                        succes = true;
+                        success = true;
                     }
                     catch (ArgumentOutOfRangeException e)
                     {
                         Console.WriteLine(e);
-                        succes = false;
+                        success = false;
                     }
 
-                    if (succes)
+                    if (success)
                     {
                         // Update Server Current
                         patches = _dmp.patch_make(Session.Document.CurrentText, edit.Diffs);
