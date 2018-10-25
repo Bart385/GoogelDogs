@@ -27,7 +27,7 @@ namespace Client
         public MainWindow()
         {
             _client = new Net.Client("127.0.0.1", 1337, OnLogin, AddMessageToLog, UpdateTextEditor,
-                RecoverUpdateTextEditor);
+                RecoverUpdateTextEditor, OnLoginFailed);
             _login = new LoginWindow(_client, this);
             _login.Show();
             this.Hide();
@@ -49,9 +49,19 @@ namespace Client
 
         public void OnLogin()
         {
-            Dispatcher.Invoke(Show);
-            Timer.Start();
+            Dispatcher.Invoke(() =>
+            {
+                this.Show();
+                _login.Close();
+                Timer.Start();
+            });
         }
+
+        public void OnLoginFailed()
+        {
+            Dispatcher.Invoke(() => _login.Show());
+        }
+
 
         private void ChatLog_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {

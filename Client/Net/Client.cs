@@ -23,9 +23,10 @@ namespace Client.Net
         public bool Running { get; set; } = true;
         public Document Document { get; }
         public DiffMatchPatch DMP { get; }
-        public Boolean LoggedIn;
+        public bool LoggedIn;
 
         private readonly Action _loginCallback;
+        private readonly Action _loginFailedCallback;
         private readonly Action<string, string> _messageLogCallback;
         private readonly Action<PatchMessage> _editorUpdateCallback;
         private readonly Action<string> _editorRecoverUpdateCallback;
@@ -44,12 +45,13 @@ namespace Client.Net
         /// <param name="editorRecoverUpdateCallback"></param>
         public Client(string hostname, int port, Action loginCallback,
             Action<string, string> messageLogCallback, Action<PatchMessage> editorUpdateCallback,
-            Action<string> editorRecoverUpdateCallback)
+            Action<string> editorRecoverUpdateCallback, Action loginFailedCallback)
         {
             _loginCallback = loginCallback;
             _messageLogCallback = messageLogCallback;
             _editorUpdateCallback = editorUpdateCallback;
             _editorRecoverUpdateCallback = editorRecoverUpdateCallback;
+            _loginFailedCallback = loginFailedCallback;
 
             Document = new Document();
             _tcpClient = new TcpClient(hostname, port);
@@ -124,25 +126,25 @@ namespace Client.Net
                     switch (message.Type)
                     {
                         case MessageType.OK_MESSAGE:
-                            HandleOkMessage((OkMessage)message);
+                            HandleOkMessage((OkMessage) message);
                             break;
                         case MessageType.OK_LOGIN_MESSAGE:
-                            HandleOkLoginMessage((OkLoginMessage)message);
+                            HandleOkLoginMessage((OkLoginMessage) message);
                             break;
                         case MessageType.ERROR_MESSAGE:
-                            HandleErrorMessage((ErrorMessage)message);
+                            HandleErrorMessage((ErrorMessage) message);
                             break;
                         case MessageType.CHAT_MESSAGE:
-                            HandleChatMessage((ChatMessage)message);
+                            HandleChatMessage((ChatMessage) message);
                             break;
                         case MessageType.PATCH_MESSAGE:
-                            HandlePatchMessage((PatchMessage)message);
+                            HandlePatchMessage((PatchMessage) message);
                             break;
                         case MessageType.PATCH_ERROR_MESSAGE:
-                            HandlePatchErrorMessage((PatchErrorMessage)message);
+                            HandlePatchErrorMessage((PatchErrorMessage) message);
                             break;
                         case MessageType.OUT_OF_SYNC_RESPONSE:
-                            HandleOutOfSyncResponse((OutOfSyncResponse)message);
+                            HandleOutOfSyncResponse((OutOfSyncResponse) message);
                             break;
                     }
                 }
@@ -158,7 +160,6 @@ namespace Client.Net
         private void HandleOkLoginMessage(OkLoginMessage message)
         {
             Console.WriteLine("Login approved!");
-            LoggedIn = true;
             _loginCallback();
         }
 
@@ -167,7 +168,7 @@ namespace Client.Net
             if (message.Message == "Login Failed")
                 Console.WriteLine("Error logging in...");
             MessageBox.Show("Er is iets fout gegaan bij het inloggen probeert u het alstblieft opnieuw");
-            LoggedIn = false;            
+            _loginFailedCallback();
         }
 
         private void HandleChatMessage(ChatMessage message)
