@@ -38,7 +38,20 @@ namespace Client
         private void Login_Click(object sender, RoutedEventArgs e)
         {
             _client.Login(UsernameTextBox.Text, PasswordTextBox.Password, SessionIDTextBox.Text);
-            this.Hide();
-        }
+            this.Close();
+
+            if (!_client.LoggedIn)
+            {
+                lw = new LoginWindow(_client, _main);
+                lw.Show();
+            }
+            }
     }
 }
+            this.Close();
+
+            if (_client.LoggedIn) { 
+               lw = new LoginWindow(_client, _main);
+                lw.Show();
+                }
+            }
