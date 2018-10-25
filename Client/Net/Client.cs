@@ -23,7 +23,6 @@ namespace Client.Net
         public bool Running { get; set; } = true;
         public Document Document { get; }
         public DiffMatchPatch DMP { get; }
-        public Boolean LoggedIn;
 
         private readonly Action _loginCallback;
         private readonly Action _loginFailedCallback;
@@ -160,7 +159,6 @@ namespace Client.Net
         private void HandleOkLoginMessage(OkLoginMessage message)
         {
             Console.WriteLine("Login approved!");
-            LoggedIn = true;
             _loginCallback();
         }
 
@@ -168,7 +166,6 @@ namespace Client.Net
         {
             if (message.Message == "Login Failed")
                 Console.WriteLine("Error logging in...");
-            LoggedIn = true;
             MessageBox.Show("Er is iets fout gegaan bij het inloggen probeert u het alstblieft opnieuw");
             _loginFailedCallback();
         }
