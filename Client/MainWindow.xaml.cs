@@ -98,6 +98,8 @@ namespace Client
             }
         }
 
+    
+
         private void TextEditor_OnTextChanged(object sender, TextChangedEventArgs e)
         {
             File.WriteAllText($"{Path.GetTempPath()}{_uuid}_GoogelDogs_local_cache.txt", TextEditor.Text);
@@ -157,8 +159,9 @@ namespace Client
             });
         }
 
+        }
 
-        private void OnCreditsClick(object sender, RoutedEventArgs e)
+        public void UpdateTextEditor(PatchMessage message)
         {
             MessageBox.Show(string.Format(
                 "========================={0} GoogleDogs was made by {0} Ruben Woldhuis & Bart van Es {0}=========================",
@@ -166,3 +169,7 @@ namespace Client
         }
     }
 }
+        }
+
+
+        private void OnCreditsClick(object sender, RoutedEventArgs e)
