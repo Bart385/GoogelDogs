@@ -159,9 +159,7 @@ namespace Client
             });
         }
 
-        }
-
-        public void UpdateTextEditor(PatchMessage message)
+        private void OnCreditsClick(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(string.Format(
                 "========================={0} GoogleDogs was made by {0} Ruben Woldhuis & Bart van Es {0}=========================",
@@ -169,7 +167,3 @@ namespace Client
         }
     }
 }
-        }
-
-
-        private void OnCreditsClick(object sender, RoutedEventArgs e)

@@ -19,6 +19,7 @@ namespace Client
     /// </summary>
     public partial class LoginWindow : Window
     {
+        LoginWindow lw;
         private Net.Client _client;
         private MainWindow _main;
 
@@ -38,6 +39,12 @@ namespace Client
         {
             _client.Login(UsernameTextBox.Text, PasswordTextBox.Password, SessionIDTextBox.Text);
             this.Close();
-        }
+
+            if (!_client.LoggedIn)
+            {
+                lw = new LoginWindow(_client, _main);
+                lw.Show();
+            }
+            }
     }
 }

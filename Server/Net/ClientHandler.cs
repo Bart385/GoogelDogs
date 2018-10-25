@@ -149,11 +149,12 @@ namespace Server.Net
             Console.WriteLine("Handling Login");
             User = UserAuthenticator.Authenticate(message.Username, message.Password, _userHandler);
             if (User == null)
+            {
                 SendMessage(new ErrorMessage("Login Failed"));
+            }
             else
             {
                 SendMessage(new OkLoginMessage());
-
                 _joinSession(message.SessionId, this);
                 SendMessage(new OkLoginMessage());
                 Session.BroadCastChatMessage("Server", $"Welcome {message.Username}");

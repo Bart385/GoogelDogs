@@ -2,20 +2,28 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using System.Windows;
 using Client.Entities;
 using OT.Business;
 using OT.Entities;
 using Protocol;
 using Protocol.Messages;
 
+
 namespace Client.Net
 {
+    /// <summary>
+    /// Client class is for the users of the program
+    /// Once the clients proejct is started it will open a loginscreen to verify the user
+    /// if the user is verified the application will go into the main Screen
+    /// </summary>
     public class Client
     {
         public string Username { get; set; }
         public bool Running { get; set; } = true;
         public Document Document { get; }
         public DiffMatchPatch DMP { get; }
+        public Boolean LoggedIn;
 
         private readonly Action _loginCallback;
         private readonly Action<string, string> _messageLogCallback;
@@ -25,6 +33,15 @@ namespace Client.Net
         private readonly NetworkStream _stream;
         private readonly Stack<Edit> _edits;
 
+        /// <summary>
+        /// The Client constructor makes contact with the server and draws a new document to use.
+        /// </summary>
+        /// <param name="hostname"></param>
+        /// <param name="port"></param>
+        /// <param name="loginCallback"></param>
+        /// <param name="messageLogCallback"></param>
+        /// <param name="editorUpdateCallback"></param>
+        /// <param name="editorRecoverUpdateCallback"></param>
         public Client(string hostname, int port, Action loginCallback,
             Action<string, string> messageLogCallback, Action<PatchMessage> editorUpdateCallback,
             Action<string> editorRecoverUpdateCallback)
@@ -33,6 +50,7 @@ namespace Client.Net
             _messageLogCallback = messageLogCallback;
             _editorUpdateCallback = editorUpdateCallback;
             _editorRecoverUpdateCallback = editorRecoverUpdateCallback;
+
             Document = new Document();
             _tcpClient = new TcpClient(hostname, port);
             Console.WriteLine(_tcpClient.Connected);
@@ -44,6 +62,12 @@ namespace Client.Net
 
         #region Commands
 
+        /// <summary>
+        /// Login is for verifieng the login name this is done by a loginMessage protocl.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <param name="session"></param>
         public void Login(string username, string password, string session)
         {
             Username = username;
@@ -100,25 +124,25 @@ namespace Client.Net
                     switch (message.Type)
                     {
                         case MessageType.OK_MESSAGE:
-                            HandleOkMessage((OkMessage) message);
+                            HandleOkMessage((OkMessage)message);
                             break;
                         case MessageType.OK_LOGIN_MESSAGE:
-                            HandleOkLoginMessage((OkLoginMessage) message);
+                            HandleOkLoginMessage((OkLoginMessage)message);
                             break;
                         case MessageType.ERROR_MESSAGE:
-                            HandleErrorMessage((ErrorMessage) message);
+                            HandleErrorMessage((ErrorMessage)message);
                             break;
                         case MessageType.CHAT_MESSAGE:
-                            HandleChatMessage((ChatMessage) message);
+                            HandleChatMessage((ChatMessage)message);
                             break;
                         case MessageType.PATCH_MESSAGE:
-                            HandlePatchMessage((PatchMessage) message);
+                            HandlePatchMessage((PatchMessage)message);
                             break;
                         case MessageType.PATCH_ERROR_MESSAGE:
-                            HandlePatchErrorMessage((PatchErrorMessage) message);
+                            HandlePatchErrorMessage((PatchErrorMessage)message);
                             break;
                         case MessageType.OUT_OF_SYNC_RESPONSE:
-                            HandleOutOfSyncResponse((OutOfSyncResponse) message);
+                            HandleOutOfSyncResponse((OutOfSyncResponse)message);
                             break;
                     }
                 }
@@ -134,6 +158,7 @@ namespace Client.Net
         private void HandleOkLoginMessage(OkLoginMessage message)
         {
             Console.WriteLine("Login approved!");
+            LoggedIn = true;
             _loginCallback();
         }
 
@@ -141,6 +166,8 @@ namespace Client.Net
         {
             if (message.Message == "Login Failed")
                 Console.WriteLine("Error logging in...");
+            MessageBox.Show("Er is iets fout gegaan bij het inloggen probeert u het alstblieft opnieuw");
+            LoggedIn = false;            
         }
 
         private void HandleChatMessage(ChatMessage message)
