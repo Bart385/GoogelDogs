@@ -11,7 +11,12 @@ namespace Protocol.Messages
         public string Username { get; }
         public string Password { get; }
         public string SessionId { get; }
-
+        /// <summary>
+        /// Sending a message to the validate the Login parameters
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <param name="sessionId"></param>
         public LoginMessage(string username, string password, string sessionId)
         {
             Username = username;

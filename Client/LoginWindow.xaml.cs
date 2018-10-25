@@ -22,7 +22,12 @@ namespace Client
         LoginWindow lw;
         private Net.Client _client;
         private MainWindow _main;
-
+        /// <summary>
+        /// Logic for the Loginwindow.
+        /// The main purpose for this winows is to handle the login for a client into a session.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="main"></param>
         public LoginWindow(Net.Client client, MainWindow main)
         {
             _client = client;
@@ -34,7 +39,11 @@ namespace Client
         {
             _client.Close();
         }
-
+        /// <summary>
+        /// Sends the username and password to the server to validate them
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Login_Click(object sender, RoutedEventArgs e)
         {
             _client.Login(UsernameTextBox.Text, PasswordTextBox.Password, SessionIDTextBox.Text);

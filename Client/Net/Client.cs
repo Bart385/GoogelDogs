@@ -109,7 +109,11 @@ namespace Client.Net
             _stream.Close();
             _tcpClient.Close();
         }
-
+        /// <summary>
+        /// The StartBackgroundListener is listening for new Messages that come in.
+        /// These messages will come in from the stream the sender is always the server.
+        /// The messages that will come forward from the stream are messages with certain types so the switch cases can recongnize it.
+        /// </summary>
         private void StartBackgroundListener()
         {
             Console.WriteLine("Connected!");
@@ -155,21 +159,31 @@ namespace Client.Net
         private void HandleOkMessage(OkMessage message)
         {
         }
-
+        /// <summary>
+        /// This is used when the Login sequence went OK
+        /// </summary>
+        /// <param name="message"></param>
         private void HandleOkLoginMessage(OkLoginMessage message)
         {
             Console.WriteLine("Login approved!");
             _loginCallback();
         }
-
+        /// <summary>
+        /// This is used when the Login sequence didnt go as planned
+        /// Wrong login, connection errors and closing tab can be causes to let the LoginWindow fail.
+        /// </summary>
+        /// <param name="message"></param>
         private void HandleErrorMessage(ErrorMessage message)
         {
             if (message.Message == "Login Failed")
                 Console.WriteLine("Error logging in...");
-            MessageBox.Show("Er is iets fout gegaan bij het inloggen probeert u het alstblieft opnieuw");
+            MessageBox.Show("Something went wrong while loggin in. /r/n Please try again.");
             _loginFailedCallback();
         }
-
+        /// <summary>
+        /// This method makes it possible to send chats back and forward between clients
+        /// </summary>
+        /// <param name="message"></param>
         private void HandleChatMessage(ChatMessage message)
         {
             _messageLogCallback(message.Sender, message.Message);

@@ -8,7 +8,9 @@ namespace Protocol.Messages
     public class OkLoginMessage : IMessage
     {
         public MessageType Type { get; } = MessageType.OK_LOGIN_MESSAGE;
-
+        /// <summary>
+        /// When the login message is valid
+        /// </summary>
         public OkLoginMessage()
         {
         }

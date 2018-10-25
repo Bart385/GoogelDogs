@@ -10,7 +10,10 @@ namespace Protocol.Messages
     public class OutOfSyncMessage : IMessage
     {
         public MessageType Type { get; } = MessageType.OUT_OF_SYNC_MESSAGE;
-
+        /// <summary>
+        /// This message is used when the messages are out of sync
+        /// </summary>
+        /// <returns></returns>
         public string ToJson()
         {
             dynamic json = new
