@@ -20,7 +20,7 @@ namespace Server.Net
         {
             _userHandler = new UserHandler("../../resources/Accounts.conf");
             _sessions = new Dictionary<string, Session>();
-            _server = new TcpListener(IPAddress.Parse("127.0.0.1"), 1337);
+            _server = new TcpListener(IPAddress.Any, 1337);
             _server.Start();
             Console.WriteLine("Started server...");
 

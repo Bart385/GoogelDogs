@@ -177,7 +177,7 @@ namespace Client.Net
         {
             if (message.Message == "Login Failed")
                 Console.WriteLine("Error logging in...");
-            MessageBox.Show("Something went wrong while loggin in. /r/n Please try again.");
+            MessageBox.Show("Something went wrong while logging in. \r\n Please try again.");
             _loginFailedCallback();
         }
         /// <summary>

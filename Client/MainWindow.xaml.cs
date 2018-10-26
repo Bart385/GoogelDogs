@@ -23,6 +23,7 @@ namespace Client
         private readonly string _uuid = Guid.NewGuid().ToString();
         private string _previousEditorContent;
         public DispatcherTimer Timer { get; }
+
         /// <summary>
         /// The constructor for the MainWindow of the client.
         /// This window has the following things implemented:
@@ -47,6 +48,7 @@ namespace Client
             Timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(1000)};
             Timer.Tick += Timer_Tick;
         }
+
         /// <summary>
         /// uses a timer to update the texteditor.
         /// </summary>
@@ -80,6 +82,7 @@ namespace Client
         private void ChatLog_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
         }
+
         /// <summary>
         /// Opens a windows explorer to save a txt file
         /// You can choose the name in the explorer
@@ -98,6 +101,7 @@ namespace Client
                 File.WriteAllText(dlg.FileName, TextEditor.Text);
             }
         }
+
         /// <summary>
         /// Opens a window explorer there the user can open the file in the texteditor
         /// </summary>
